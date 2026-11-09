@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}World Beard &amp; Moustache Championships{% endblock %}
+{% block content %}
+<section class="hero py-4 py-md-5">
+  <p class="eyebrow">CRAFT. CHARACTER. CHAMPIONSHIP HISTORY.</p>
+  <h1>Extraordinary beards.<br>A remarkable record.</h1>
+  <p class="lead mt-4">Explore the World Beard &amp; Moustache Championships through recorded competitors, categories and published results.</p>
+  <a class="btn btn-primary btn-lg mt-2" href="/results">Explore championship rankings <span aria-hidden="true">→</span></a>
+</section>
+<div class="archive-summary border-top border-bottom py-3 my-4 d-flex flex-wrap gap-4">
+  <span><strong>{{ editions|length }}</strong> editions listed</span><span><strong>{{ categories }}</strong> edition categories</span><span><strong>{{ '{:,}'.format(entries) }}</strong> recorded results</span>
+</div>
+<div class="row g-4 mt-2">
+  {% for title,desc,path in [('Browse the editions','Discover the available categories and results for each championship.','/championships'),('Find a competitor','Search the names exactly as recorded in the archive.','/competitors'),('Compare the records','Explore category participation and cross-edition name matches.','/reports')] %}
+  <div class="col-md-4"><article class="archive-card h-100"><h2 class="h4">{{ title }}</h2><p>{{ desc }}</p><a href="{{ path }}">Open archive <span aria-hidden="true">→</span></a></article></div>
+  {% endfor %}
+</div>
+<p class="small text-secondary mt-4">Coverage varies by edition. Unpublished scores remain unrecorded; published ties are preserved.</p>
+{% endblock %}

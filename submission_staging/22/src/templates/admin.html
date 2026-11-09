@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% block title %}Administration{% endblock %}
+{% block content %}<p class="eyebrow">SYNTHETIC DEMO ONLY</p><h1>Administrative operations</h1>
+<p>These forms operate only on a separately configured demo database. Use the identifiers printed by the demo setup command. A local access token is required.</p>
+{% if error %}<p class="alert alert-danger" role="alert">{{ error }}</p>{% endif %}
+{% if result %}<div class="alert alert-success">Transaction committed.</div><h2 class="h4">Before</h2><pre>{{ result.before }}</pre><h2 class="h4">After</h2><pre>{{ result.after }}</pre>{% endif %}
+<div class="row g-4 mt-2">{% for operation,title,fields in [('register','Register an entry',['year','contest_no','competitor_id']),('club','Change club membership',['club_id','status']),('delete','Delete an unpublished entry',['year','contest_no','entry_no'])] %}
+<section class="col-md-4"><h2 class="h4">{{ title }}</h2><form method="post" action="/admin/{{ operation }}" class="filter-panel">
+{% for field in fields %}<label class="form-label mt-2" for="{{ operation }}-{{ field }}">{{ field|replace('_',' ')|title }}</label>{% if field=='status' %}<select class="form-select" id="{{ operation }}-{{ field }}" name="status">{% for s in ['Active','Inactive','Suspended','Pending'] %}<option>{{ s }}</option>{% endfor %}</select>{% else %}<input class="form-control" type="number" min="1" id="{{ operation }}-{{ field }}" name="{{ field }}" required>{% endif %}{% endfor %}
+<label class="form-label mt-2" for="{{ operation }}-token">Local demo token</label><input class="form-control" type="password" id="{{ operation }}-token" name="token" required autocomplete="off"><button class="btn btn-primary mt-3">{{ title }}</button></form></section>{% endfor %}</div>{% endblock %}

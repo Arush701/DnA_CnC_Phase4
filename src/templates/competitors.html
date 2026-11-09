@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% block title %}Competitors{% endblock %}
+{% block content %}
+<p class="eyebrow">THE COMPETITORS</p><h1>Find a recorded name</h1><p class="text-secondary">Records are edition-specific. Identical names do not establish that two records belong to the same person.</p>
+<form method="get" class="filter-panel row g-3 align-items-end"><div class="col-md-7"><label class="form-label" for="q">Competitor name</label><input class="form-control" id="q" name="q" value="{{ q }}" maxlength="255" placeholder="e.g. Elmar Weisser"></div><div class="col-md-3"><label class="form-label" for="year">Edition (optional)</label><input class="form-control" id="year" name="year" value="{{ year }}" type="number" min="1" max="32767"></div><div class="col-md-2"><button class="btn btn-primary w-100">Search</button></div></form>
+<div class="table-responsive mt-4"><table class="table align-middle"><caption>Page {{ page }} · up to 50 records</caption><thead><tr><th scope="col">Recorded name</th><th scope="col">Edition</th><th scope="col">Entries</th><th scope="col">Explore</th></tr></thead><tbody>
+{% for r in rows %}<tr><th scope="row">{{ r.competitor_name }}</th><td>{{ r.first_year or '—' }}{% if r.last_year != r.first_year %}–{{ r.last_year }}{% endif %}</td><td>{{ r.result_entries }}</td><td>{% if r.first_year %}<a href="/results?year={{ r.first_year }}">Edition results</a> · {% endif %}<a href="/reports?report=performance&amp;name={{ r.competitor_name|urlencode }}">Name matches</a></td></tr>{% else %}<tr><td colspan="4">No competitors match these filters. Try another name or edition.</td></tr>{% endfor %}
+</tbody></table></div>
+<nav aria-label="Search pages" class="d-flex gap-3">{% if page>1 %}<a href="?q={{ q|urlencode }}&amp;year={{ year|urlencode }}&amp;page={{ page-1 }}">Previous</a>{% endif %}{% if more %}<a href="?q={{ q|urlencode }}&amp;year={{ year|urlencode }}&amp;page={{ page+1 }}">Next</a>{% endif %}</nav>
+{% endblock %}

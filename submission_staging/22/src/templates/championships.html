@@ -1,0 +1,7 @@
+{% extends 'base.html' %}{% block title %}Championships{% endblock %}
+{% block content %}
+<p class="eyebrow">THE EDITIONS</p><h1>Championship history</h1><p class="text-secondary">Browse available categories and recorded results, edition by edition.</p>
+<div class="table-responsive mt-4"><table class="table align-middle"><caption>Coverage of the championship archive</caption><thead><tr><th scope="col">Edition</th><th scope="col">Status</th><th scope="col">Categories</th><th scope="col">Recorded entries</th><th scope="col">Explore</th></tr></thead><tbody>
+{% for e in editions %}<tr><th scope="row">{{ e.year }}</th><td>{{ e.status }}</td><td>{{ e.categories }}</td><td>{{ e.entries }}</td><td><a href="/results?year={{ e.year }}">{{ 'View results' if e.entries else 'View edition' }}</a></td></tr>{% else %}<tr><td colspan="5">No editions available.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}
