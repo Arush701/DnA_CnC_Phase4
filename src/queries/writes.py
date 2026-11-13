@@ -53,6 +53,10 @@ def execute(conn, operation, **values):
                     c.execute('INSERT INTO ENTRY (championship_year,contest_no,entry_no,competitor_id) VALUES (%s,%s,%s,%s)',(year,contest,number,competitor))
                     c.execute('SELECT * FROM ENTRY WHERE championship_year=%s AND contest_no=%s AND entry_no=%s',(year,contest,number))
                     after=c.fetchone()
+                    # fetch contest name (category name) for confirmation
+                    c.execute('SELECT cat.category_name FROM CONTEST con JOIN CATEGORY cat ON con.category_id=cat.category_id WHERE con.championship_year=%s AND con.contest_no=%s',(year,contest))
+                    contest_name_row=c.fetchone()
+                    contest_name=contest_name_row['category_name'] if contest_name_row else None
                     # Optional club affiliation: blank means no REPRESENTS row is created.
                     club=values.get('club_id')
                     if club is not None:
@@ -62,7 +66,7 @@ def execute(conn, operation, **values):
                         c.execute('SELECT club_id FROM REPRESENTS WHERE competitor_id=%s AND championship_year=%s',(competitor,year))
                         if c.fetchone(): raise ValueError('Competitor already represents a club in this edition.')
                         c.execute('INSERT INTO REPRESENTS (competitor_id,championship_year,club_id) VALUES (%s,%s,%s)',(competitor,year,club))
-                    after=dict(after); after['club_affiliation']=club
+                    after=dict(after); after['club_affiliation']=club; after['contest_name']=contest_name
                 elif operation=='newcompetitor':
                     # INSERT: a new person plus their entry, with optional club, nickname and hometown,
                     # all in one transaction (any failure rolls everything back).
