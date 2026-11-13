@@ -1,4 +1,5 @@
-"""Local demo forms. Shared secret is submitted with each operation, never persisted."""
+"""Local admin forms. Shared secret is submitted with each operation, never persisted."""
+from decimal import Decimal, InvalidOperation
 import hmac
 import os
 from urllib.parse import parse_qs
@@ -15,10 +16,7 @@ router=APIRouter()
 
 
 def perform(operation, values):
-    target=os.environ.get('DEMO_DB_NAME','')
-    if not re.fullmatch(r'wbmc_demo_[a-f0-9]{32}',target):
-        raise ValueError('Configure a separate synthetic demo database first.')
-    config=get_db_config(); config['database']=target
+    config=get_db_config()
     conn=pymysql.connect(**config,cursorclass=pymysql.cursors.DictCursor,autocommit=False)
     try: return execute(conn,operation,**values)
     finally: conn.close()
@@ -34,11 +32,19 @@ async def write(request: Request, operation: str):
     if not expected or not hmac.compare_digest(token,expected): raise HTTPException(403)
     try:
         names={'register':('year','contest_no','competitor_id'),'club':('club_id','status'),
-               'delete':('year','contest_no','entry_no')}.get(operation)
+               'delete':('year','contest_no','entry_no'),'score':('year','contest_no','entry_no')}.get(operation)
         if names is None: raise ValueError('Unknown operation.')
         values={name:fields.get(name,[''])[0] for name in names}
         for name in names:
             if name!='status': values[name]=int(values[name])
+        if operation=='score':  # score is required; rank is left unchanged
+            try: score=Decimal(fields.get('published_total_score',[''])[0].strip())
+            except InvalidOperation: raise ValueError('Enter the score as a number.')
+            if not score.is_finite(): raise ValueError('Enter the score as a number.')
+            values['published_total_score']=score
+        if operation=='register':  # optional field: blank means "no club"
+            club=fields.get('club_id',[''])[0].strip()
+            values['club_id']=int(club) if club else None
         result=await run_in_threadpool(perform,operation,values)
         return render(request,'admin',result=result)
     except (ValueError,OverflowError) as exc:

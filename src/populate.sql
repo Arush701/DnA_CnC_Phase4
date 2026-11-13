@@ -4,6 +4,27 @@
 -- Quarantined ambiguous identities and placement markers are intentionally excluded.
 SET NAMES utf8mb4;
 
+INSERT INTO VENUE (venue_id, venue_name, street, city, region, postal_code, country, capacity) VALUES
+    (1, NULL, NULL, 'Höfen/Enz', NULL, NULL, 'Germany', NULL),
+    (2, NULL, NULL, 'Pforzheim', NULL, NULL, 'Germany', NULL),
+    (3, NULL, NULL, 'Trondheim', NULL, NULL, 'Norway', NULL),
+    (4, NULL, NULL, 'Ystad', NULL, NULL, 'Sweden', NULL),
+    (5, NULL, NULL, 'Schömberg', NULL, NULL, 'Germany', NULL),
+    (6, NULL, NULL, 'Carson City', 'Nevada', NULL, 'USA', NULL),
+    (7, NULL, NULL, 'Berlin', NULL, NULL, 'Germany', NULL),
+    (8, NULL, NULL, 'Brighton', NULL, NULL, 'England', NULL),
+    (9, NULL, NULL, 'Anchorage', 'Alaska', NULL, 'USA', NULL),
+    (10, NULL, NULL, 'Leinfelden-Echterdingen', NULL, NULL, 'Germany', NULL),
+    (11, NULL, NULL, 'Leogang', NULL, NULL, 'Austria', NULL),
+    (12, NULL, NULL, 'Austin', 'Texas', NULL, 'USA', NULL),
+    (13, NULL, NULL, 'Antwerp', NULL, NULL, 'Belgium', NULL),
+    (14, NULL, NULL, 'Auckland', NULL, NULL, 'New Zealand', NULL),
+    (15, NULL, NULL, 'Burghausen', NULL, NULL, 'Germany', NULL),
+    (16, NULL, NULL, 'Pittsburgh', 'Pennsylvania', NULL, 'USA', NULL),
+    (17, NULL, NULL, 'Blackpool', NULL, NULL, 'England', NULL),
+    (18, NULL, NULL, 'Spokane', 'Washington', NULL, 'USA', NULL);
+
+
 INSERT INTO CHAMPIONSHIP (championship_year, status, start_date, end_date, cancellation_reason, website_url) VALUES
     (1990, 'Held', NULL, NULL, NULL, NULL),
     (1995, 'Held', NULL, NULL, NULL, NULL),
@@ -759,6 +780,16 @@ INSERT INTO CONTEST (championship_year, contest_no, category_id, scheduled_date,
     (2025, 35, 239, NULL, NULL, 'Published'),
     (2025, 36, 240, NULL, NULL, 'Published'),
     (2025, 37, 241, NULL, NULL, 'Published');
+
+-- Open contests for the scheduled 2027 edition, so the website can register new entries
+-- in the live database without touching published history.
+-- They reuse four existing 2025 category rows (no new categories are invented).
+-- Put this AFTER the CONTEST insert in populate.sql.
+INSERT INTO CONTEST (championship_year, contest_no, category_id, scheduled_date, registration_status, result_status) VALUES
+    (2027, 1, 230, NULL, 'Open', 'Pending'),   -- Natural Moustache
+    (2027, 2, 229, NULL, 'Open', 'Pending'),   -- Imperial Moustache
+    (2027, 3, 213, NULL, 'Open', 'Pending'),   -- Full Beard Freestyle
+    (2027, 4, 205, NULL, 'Open', 'Pending');   -- Craft Creative Beard
 
 INSERT INTO COMPETITOR (competitor_id, email, first_name, middle_name, last_name, birth_date) VALUES
     (2, NULL, 'Elmar Weisser', NULL, '', NULL),
@@ -4002,3 +4033,917 @@ INSERT INTO ENTRY (championship_year, contest_no, entry_no, competitor_id, homet
     (2023, 1, 1, 1665, NULL, NULL, NULL, NULL, 1, NULL, 0),
     (2023, 3, 1, 1666, NULL, NULL, NULL, NULL, 1, NULL, 0);
 
+INSERT INTO BEST_IN_SHOW (championship_year, contest_no, entry_no, award_division) VALUES
+    (1999,  7, 1, 'Overall'),      -- Karl-Heinz Hille, Imperial Partial Beard
+    (2011,  1, 1, 'Overall'),      -- Elmar Weisser, Full Beard Freestyle
+    (2017,  9, 1, 'Overall'),      -- Jason Kiley, entered in Full Beard Freestyle
+    (2019, 14, 7, 'Men'),          -- Eugen Hipp, Imperial Moustache
+    (2019,  4, 1, 'Women'),        -- Muege/Müge Mete, Realistic Moustache
+    (2023,  4, 1, 'Beardsmen'),    -- Norbert Topf, Freestyle Cheekbeard
+    (2025, 11, 1, 'Men'),          -- Trevor Mustafa, Full Beard Natural 20 - 30 cm
+    (2025,  1, 1, 'Women');        -- Kristin Wagner, Craft Creative Beard
+
+
+INSERT INTO CLUB (club_id, club_name, club_type, country, founded_year, membership_status, contact_email) VALUES
+    (1,  'Mad Viking Beard Club Pennsylvania',            NULL,                                  'USA',            NULL, NULL, NULL),
+    (2,  'Ostbayerische Bart- und Schnauzerclub',         'Beard and moustache club',            'Germany',        1996, NULL, NULL),
+    (3,  'The Fellowship of the Beard NZ',                'Community',                           'New Zealand',    NULL, NULL, NULL),
+    (4,  'Snorrenclub Antwerpen',                         'Moustache club',                      'Belgium',        NULL, NULL, NULL),
+    (5,  'Austin Facial Hair Club',                       'Facial hair club',                    'USA',            NULL, NULL, 'austinfacialhairclub@gmail.com'),
+    (6,  'Bart & Kultur Club "Belle Moustache" eV',       'Beard and culture club',              'Germany',        2002, NULL, NULL),
+    (7,  'Den Norske Mustach-club av -91',                'Moustache club',                      'Norway',         NULL, NULL, NULL),
+    (8,  'South Central Alaska Beard and Moustache Club', 'Beard and moustache club',            'USA',            NULL, NULL, NULL),
+    (9,  'The Handlebar Club',                            'Gentlemen''s club and moustache club','United Kingdom', 1947, NULL, NULL),
+    (10, 'First Berliner Beard Club',                     NULL,                                  'Germany',        NULL, NULL, NULL),
+    (11, 'Beard Team USA',                                'Community advocacy organization',     'USA',            NULL, NULL, NULL),
+    (12, 'Svenska Mustaschklubben',                       'Moustache club',                      'Sweden',         1984, NULL, NULL);
+
+INSERT INTO CLUB_SOCIAL_LINK (club_id, social_link) VALUES
+    (2,  'https://bcostbayern.de/'),
+    (5,  'https://www.austinfacialhairclub.com/'),
+    (5,  'https://www.facebook.com/austinfacialhairclub'),
+    (5,  'https://instagram.com/austinfacialhairclub'),
+    (5,  'https://www.twitch.tv/austinfacialhairclub'),
+    (5,  'https://www.flickr.com/people/131537946@N03/'),
+    (8,  'https://www.facebook.com/SCAKBMC/'),
+    (9,  'https://handlebarclub.co.uk/'),
+    (11, 'https://www.beardteamusa.org/');
+
+UPDATE CHAMPIONSHIP SET venue_id = 1 WHERE championship_year = 1990;  -- Höfen/Enz, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 2 WHERE championship_year = 1995;  -- Pforzheim, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 3 WHERE championship_year IN (1997, 2011);  -- Trondheim, Norway
+UPDATE CHAMPIONSHIP SET venue_id = 4 WHERE championship_year = 1999;  -- Ystad, Sweden
+UPDATE CHAMPIONSHIP SET venue_id = 5 WHERE championship_year = 2001;  -- Schömberg, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 6 WHERE championship_year = 2003;  -- Carson City, Nevada, USA
+UPDATE CHAMPIONSHIP SET venue_id = 7 WHERE championship_year = 2005;  -- Berlin, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 8 WHERE championship_year = 2007;  -- Brighton, England
+UPDATE CHAMPIONSHIP SET venue_id = 9 WHERE championship_year = 2009;  -- Anchorage, Alaska, USA
+UPDATE CHAMPIONSHIP SET venue_id = 10 WHERE championship_year = 2013;  -- Leinfelden-Echterdingen, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 11 WHERE championship_year = 2015;  -- Leogang, Austria
+UPDATE CHAMPIONSHIP SET venue_id = 12 WHERE championship_year = 2017;  -- Austin, Texas, USA
+UPDATE CHAMPIONSHIP SET venue_id = 13 WHERE championship_year = 2019;  -- Antwerp, Belgium
+UPDATE CHAMPIONSHIP SET venue_id = 14 WHERE championship_year = 2021;  -- Auckland, New Zealand
+UPDATE CHAMPIONSHIP SET venue_id = 15 WHERE championship_year = 2023;  -- Burghausen, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 16 WHERE championship_year = 2025;  -- Pittsburgh, Pennsylvania, USA
+UPDATE CHAMPIONSHIP SET venue_id = 17 WHERE championship_year = 2027;  -- Blackpool, England
+UPDATE CHAMPIONSHIP SET venue_id = 18 WHERE championship_year = 2029;  -- Spokane, Washington, USA
+ 
+
+
+INSERT INTO COMPETITOR_NICKNAME (competitor_id, nickname) VALUES
+    (198, 'Ghost'),         -- Corey Giehl, Fairborn, OH, USA
+    (446, 'Memo');          -- Mehmet Mete, Braunschweig, Germany
+    
+-- populate.sql: CHAMPIONSHIP_PHOTO_CREDIT
+INSERT INTO CHAMPIONSHIP_PHOTO_CREDIT (championship_year, photo_credit) VALUES
+    (2017, 'Greg Anderson'),
+    (2019, 'bartweltmeister.de'),
+    (2025, 'Greg Anderson Photography');
+
+-- Host clubs (CLUB rows must already exist)
+UPDATE CHAMPIONSHIP SET host_club_id = 7 WHERE championship_year IN (1997, 2011);
+UPDATE CHAMPIONSHIP SET host_club_id = 9 WHERE championship_year = 2007;
+UPDATE CHAMPIONSHIP SET host_club_id = 8 WHERE championship_year = 2009;
+UPDATE CHAMPIONSHIP SET host_club_id = 6 WHERE championship_year = 2013;
+UPDATE CHAMPIONSHIP SET host_club_id = 5 WHERE championship_year = 2017;
+UPDATE CHAMPIONSHIP SET host_club_id = 4 WHERE championship_year = 2019;
+UPDATE CHAMPIONSHIP SET host_club_id = 2 WHERE championship_year = 2023;
+UPDATE CHAMPIONSHIP SET host_club_id = 1 WHERE championship_year = 2025;
+
+-- 2021 was postponed to 2023 (Wikipedia: "Postponed to 2023 due to COVID-19").
+INSERT INTO RESCHEDULED_TO (cancelled_year, replacement_year) VALUES (2021, 2023);
+
+-- =====================================================================
+-- ENTRY hometowns. Put AFTER the ENTRY insert.
+-- Source: WBMC_Historical_Database_Completed.xlsx, All Results sheet, column
+-- "Country / Region / Location", split into city / region / country.
+-- 826 entries have a published location; all other entries stay NULL
+-- (2011, 2013, 2015 and 2017 publish none).
+-- =====================================================================
+
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 1 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 1 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 1999 AND contest_no = 1 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 2 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 2 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 2 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 3 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 3 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 3 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 4 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 4 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Sweden' WHERE championship_year = 1999 AND contest_no = 4 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 5 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 5 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 1999 AND contest_no = 5 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 6 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 1999 AND contest_no = 6 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Sweden' WHERE championship_year = 1999 AND contest_no = 6 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 7 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 7 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 7 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 8 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 8 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 1999 AND contest_no = 8 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 9 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 1999 AND contest_no = 9 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 1999 AND contest_no = 9 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 1 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 1 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 1 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 2 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 2 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 2 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 3 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Austria' WHERE championship_year = 2001 AND contest_no = 3 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 3 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 4 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 4 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 4 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 5 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 5 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 5 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 6 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 6 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 6 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 7 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 7 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 7 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 8 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 8 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 8 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 9 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2001 AND contest_no = 9 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 9 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 10 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 10 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 10 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 11 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 11 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 11 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 12 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 12 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2001 AND contest_no = 12 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 13 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Austria' WHERE championship_year = 2001 AND contest_no = 13 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 13 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 14 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 14 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2001 AND contest_no = 14 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 15 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 15 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 15 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 16 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 16 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 16 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2001 AND contest_no = 17 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2001 AND contest_no = 17 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2001 AND contest_no = 17 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Austria' WHERE championship_year = 2003 AND contest_no = 1 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 1 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 1 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 2 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 2 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Austria' WHERE championship_year = 2003 AND contest_no = 2 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2003 AND contest_no = 3 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 3 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 4 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2003 AND contest_no = 4 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 4 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 5 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 5 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 5 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2003 AND contest_no = 6 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 6 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2003 AND contest_no = 6 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 7 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 7 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 7 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 8 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Norway' WHERE championship_year = 2003 AND contest_no = 8 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 8 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2003 AND contest_no = 9 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2003 AND contest_no = 9 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 9 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 10 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 10 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2003 AND contest_no = 10 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 11 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Austria' WHERE championship_year = 2003 AND contest_no = 11 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 11 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2003 AND contest_no = 12 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Norway' WHERE championship_year = 2003 AND contest_no = 12 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Hong Kong' WHERE championship_year = 2003 AND contest_no = 12 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2003 AND contest_no = 13 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2003 AND contest_no = 13 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2003 AND contest_no = 14 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2003 AND contest_no = 14 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 14 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2003 AND contest_no = 15 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 15 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 15 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 16 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 16 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2003 AND contest_no = 17 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2003 AND contest_no = 17 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2003 AND contest_no = 17 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 1 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 1 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2005 AND contest_no = 1 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 2 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2005 AND contest_no = 2 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 3 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 3 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2005 AND contest_no = 3 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 4 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2005 AND contest_no = 4 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2005 AND contest_no = 4 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 5 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 5 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2005 AND contest_no = 5 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 6 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 6 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2005 AND contest_no = 6 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2005 AND contest_no = 7 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 7 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 7 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 8 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 8 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 8 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 9 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 9 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 9 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 10 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 10 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2005 AND contest_no = 10 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 11 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 11 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2005 AND contest_no = 11 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2005 AND contest_no = 12 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 12 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 12 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 13 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 13 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 14 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 14 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 14 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 15 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 15 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 15 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 16 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 16 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2005 AND contest_no = 16 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2005 AND contest_no = 17 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2005 AND contest_no = 17 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2005 AND contest_no = 17 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 1 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 1 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 1 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 2 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2007 AND contest_no = 3 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Sweden' WHERE championship_year = 2007 AND contest_no = 3 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2007 AND contest_no = 3 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2007 AND contest_no = 4 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 4 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2007 AND contest_no = 4 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 5 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 5 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 5 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 6 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 6 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2007 AND contest_no = 6 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 7 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2007 AND contest_no = 7 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 7 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 8 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2007 AND contest_no = 8 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2007 AND contest_no = 8 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2007 AND contest_no = 9 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 9 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2007 AND contest_no = 9 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2007 AND contest_no = 10 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2007 AND contest_no = 10 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 10 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2007 AND contest_no = 11 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 11 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2007 AND contest_no = 11 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2007 AND contest_no = 12 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 13 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 13 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 13 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2007 AND contest_no = 14 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 14 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2007 AND contest_no = 14 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2007 AND contest_no = 15 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2007 AND contest_no = 15 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2007 AND contest_no = 15 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 16 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 16 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2007 AND contest_no = 16 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 17 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 17 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2007 AND contest_no = 17 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 1 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 1 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 1 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 2 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 2 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 2 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 3 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 3 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 3 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 4 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 4 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Canada' WHERE championship_year = 2009 AND contest_no = 4 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2009 AND contest_no = 5 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 5 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 5 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 6 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 6 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 6 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 7 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 7 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 7 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 8 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 8 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2009 AND contest_no = 8 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 9 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 9 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 9 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 10 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 10 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 10 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2009 AND contest_no = 11 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2009 AND contest_no = 11 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 11 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 12 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 12 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 12 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2009 AND contest_no = 13 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 13 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 14 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 14 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2009 AND contest_no = 14 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 15 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2009 AND contest_no = 15 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 15 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 16 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 16 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2009 AND contest_no = 16 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 17 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2009 AND contest_no = 17 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 17 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 18 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2009 AND contest_no = 18 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2009 AND contest_no = 18 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'England' WHERE championship_year = 2019 AND contest_no = 1 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 1 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 1 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 2 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'England' WHERE championship_year = 2019 AND contest_no = 2 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 2 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Canada' WHERE championship_year = 2019 AND contest_no = 3 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 3 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 3 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 4 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 4 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 4 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Austria' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Estonia' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 13;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'England' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 14;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 15;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 16;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 5 AND entry_no = 17;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Ireland' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 13;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 14;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 15;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 16;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 17;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 18;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 6 AND entry_no = 19;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'England' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 13;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 14;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 15;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 16;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 17;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 18;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'New Zealand' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 19;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'New Zealand' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 20;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 21;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 22;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 23;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 24;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 25;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Spain' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 26;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 27;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 28;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 29;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 30;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 32;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'New Zealand' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 33;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 34;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 7 AND entry_no = 35;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Ireland' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Sweden' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Denmark' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Sweden' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 13;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 14;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 15;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 16;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 17;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 18;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 19;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Austria' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 20;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 21;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'England' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 22;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Sweden' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 23;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 24;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 25;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Norway' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 26;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Russian Federation' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 27;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 28;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 29;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Israel' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 30;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 31;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 32;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 8 AND entry_no = 33;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Israel' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 13;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 14;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 15;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 16;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 17;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Hungary' WHERE championship_year = 2019 AND contest_no = 9 AND entry_no = 18;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Australia' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Israel' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 13;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 14;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 15;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 10 AND entry_no = 16;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'India' WHERE championship_year = 2019 AND contest_no = 11 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 11 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 11 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 11 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 11 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 12 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 12 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2019 AND contest_no = 12 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 12 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 12 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2019 AND contest_no = 12 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 12 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 12 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 12 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 13 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 13 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Hungary' WHERE championship_year = 2019 AND contest_no = 13 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 13 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Hungary' WHERE championship_year = 2019 AND contest_no = 13 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 13 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2019 AND contest_no = 14 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 14 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 14 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2019 AND contest_no = 14 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 14 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 14 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 14 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 14 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 14 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Norway' WHERE championship_year = 2019 AND contest_no = 15 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 15 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 15 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 15 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 15 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Norway' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Hungary' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Czech Republic' WHERE championship_year = 2019 AND contest_no = 16 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 17 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'England' WHERE championship_year = 2019 AND contest_no = 17 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 17 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 17 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 17 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 17 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 18 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 18 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 18 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 19 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 19 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 19 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 20 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2019 AND contest_no = 20 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2019 AND contest_no = 20 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2019 AND contest_no = 20 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 20 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 20 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 20 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 20 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 20 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2019 AND contest_no = 20 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 20 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 21 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 21 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 21 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 21 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 21 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 21 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 21 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 21 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 21 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 21 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Austria' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Nepal' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 13;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 14;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 15;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 16;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Canada' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 17;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Netherlands' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 18;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 19;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 20;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2019 AND contest_no = 22 AND entry_no = 21;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'France' WHERE championship_year = 2019 AND contest_no = 23 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'UK/Poland' WHERE championship_year = 2019 AND contest_no = 23 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 23 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 23 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2019 AND contest_no = 23 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'USA' WHERE championship_year = 2019 AND contest_no = 23 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Olmsted Falls', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 1 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Sherman', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 1 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Surprise', hometown_region = 'AZ', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 1 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 1 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Astoria', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 1 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Portsmouth', hometown_region = 'RI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 1 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Austin', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 1 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Ocala', hometown_region = 'FL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 1 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Slippery Rock', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 1 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Fort Worth', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 1 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Modesto', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 2 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Montpelier', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 2 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Schulenburg', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 2 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 2 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Aiken', hometown_region = 'SC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 3 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Louisville', hometown_region = 'KY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 3 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Grantham', hometown_region = 'NH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 4 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'St. Louis', hometown_region = 'MO', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 4 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Davis', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 4 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Braunschweig', hometown_region = 'Lower Saxony', hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 5 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'New Castle', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 5 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Ruckersville', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 5 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Braunschweig', hometown_region = 'Lower Saxony', hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 5 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Ruckersville', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 5 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Elizabethtown', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 6 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Celina', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 6 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Louisville', hometown_region = 'KY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 6 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Millington', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 6 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Williamsburg', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 6 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Pittsburgh', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 7 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Pittsburgh', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 7 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Salisbury', hometown_region = 'NC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 7 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Henrico', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 7 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Brooklyn', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 8 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Eugene', hometown_region = 'OR', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 8 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Lexington', hometown_region = 'KY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 8 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Killeen', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 8 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Lower Burrell', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 8 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Glad Spring', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 8 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Roma', hometown_region = NULL, hometown_country = 'Italy' WHERE championship_year = 2025 AND contest_no = 8 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Martinsburg', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 8 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Pittsburgh', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 8 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Ligonier', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 9 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Fort Worth', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 9 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Pinon Hills', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 9 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Garden City', hometown_region = 'ID', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 9 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Amelia', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 9 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Ashland', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 9 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Cutler Bay', hometown_region = 'FL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 9 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Surrey', hometown_region = 'British Columbia', hometown_country = 'Canada' WHERE championship_year = 2025 AND contest_no = 9 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Phoenix', hometown_region = 'AZ', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 9 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Montpelier', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 9 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Fairbanks', hometown_region = 'AK', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 10 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Ashland City', hometown_region = 'TN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 10 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Weatherford', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 10 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Lizton', hometown_region = 'IN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 10 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Jacksonville', hometown_region = 'FL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 10 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Youngstown', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 10 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Thomasville', hometown_region = 'NC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 10 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Pittsburgh', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 10 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Wauwatosa', hometown_region = 'WI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 10 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Portland', hometown_region = 'OR', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 10 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Antelope', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Missoula', hometown_region = 'MT', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Blackpool', hometown_region = NULL, hometown_country = 'England' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Missoula', hometown_region = 'MT', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Casper', hometown_region = 'WY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Harrisburg', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'New Castle', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Valencia', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Oakhurst', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Brownsburg', hometown_region = 'IN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Charlotte', hometown_region = 'TN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = 'Spokane', hometown_region = 'WA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = 'Lewes', hometown_region = 'DE', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 13;
+UPDATE ENTRY SET hometown_city = 'Washington', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 14;
+UPDATE ENTRY SET hometown_city = 'St. Clair Shores', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 15;
+UPDATE ENTRY SET hometown_city = 'Blairsville', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 16;
+UPDATE ENTRY SET hometown_city = 'Cheyenne', hometown_region = 'WY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 11 AND entry_no = 17;
+UPDATE ENTRY SET hometown_city = 'Palmyra', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 12 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Westminster', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 12 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Detroit', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 12 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Doswell', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 12 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Granbury', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 12 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Anchorage', hometown_region = 'AK', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 12 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Flushing', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 12 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Groton', hometown_region = 'CT', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 12 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Denver', hometown_region = 'CO', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 12 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Corrales', hometown_region = 'NM', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 12 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Eagle River', hometown_region = 'AK', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 12 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = 'Midlothian', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 13 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Grantham', hometown_region = 'NH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 13 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Kirkville', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 13 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Findlay', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 13 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Washington', hometown_region = 'UT', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 13 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Flag Pond', hometown_region = 'TN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 13 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Brazil' WHERE championship_year = 2025 AND contest_no = 13 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Downington', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 13 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Harleysville', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 13 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Claremont', hometown_region = 'NH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 13 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Eddy', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Anchorage', hometown_region = 'AK', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Perkins Township', hometown_region = 'ME', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Aichelberg', hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Perry', hometown_region = 'GA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Jamestown', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Newcastle', hometown_region = NULL, hometown_country = 'Canada' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Yuba City', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Cheswick', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Sioux Falls', hometown_region = 'SD', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Norfolk', hometown_region = 'NE', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = 'Downers Grove', hometown_region = 'IL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 14 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = 'Christiana', hometown_region = 'TN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 15 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Ocala', hometown_region = 'FL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 15 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Pickerington', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 15 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Summersville', hometown_region = 'WV', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 15 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Mount Rainier', hometown_region = 'MD', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 15 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 15 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Tucson', hometown_region = 'AZ', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 15 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Northglenn', hometown_region = 'CO', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 15 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Olmsted Falls', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 16 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Hurlock', hometown_region = 'MD', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 16 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Lebanon', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 16 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Spring Lake', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 16 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Bay Village', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 16 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Pulaski', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 16 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Blackpool', hometown_region = NULL, hometown_country = 'England' WHERE championship_year = 2025 AND contest_no = 16 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Lakeland', hometown_region = 'FL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 16 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Girard', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 16 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Belford', hometown_region = 'NJ', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 16 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Indianapolis', hometown_region = 'IN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 16 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = 'Dearborn', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 17 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Arvada', hometown_region = 'CO', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 17 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Harmony', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 17 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Upper Darpy', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 17 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Roseville', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 17 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Oberhof', hometown_region = 'Aargau', hometown_country = 'Switzerland' WHERE championship_year = 2025 AND contest_no = 17 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Penelope', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 17 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Pittsburgh', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 17 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Pasadena', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 17 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Hull', hometown_region = NULL, hometown_country = 'England' WHERE championship_year = 2025 AND contest_no = 18 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Mays Landing', hometown_region = 'NJ', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 18 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Brownstown Charter', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 18 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Mays Landing', hometown_region = 'NJ', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 18 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Georgetown', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 18 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Lincolnton', hometown_region = 'NC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 18 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Farmington Hills', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 18 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Cutler Bay', hometown_region = 'FL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 18 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Scarborough', hometown_region = 'Ontario', hometown_country = 'Canada' WHERE championship_year = 2025 AND contest_no = 18 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Elizabethtown', hometown_region = 'KY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 18 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = 'Nashville', hometown_region = 'TN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 18 AND entry_no = 13;
+UPDATE ENTRY SET hometown_city = 'Dresher', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 19 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Oslo', hometown_region = NULL, hometown_country = 'Norway' WHERE championship_year = 2025 AND contest_no = 19 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Fairbanks', hometown_region = 'AK', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 19 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Evansville', hometown_region = 'IN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 19 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Antwerpen', hometown_region = NULL, hometown_country = 'Belgium' WHERE championship_year = 2025 AND contest_no = 19 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Spokane', hometown_region = 'WA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 19 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Thompson', hometown_region = 'ND', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 19 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Cleveland', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 19 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Greensboro', hometown_region = 'NC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 19 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Ellicott', hometown_region = 'MD', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 19 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Stanton', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 20 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Dora', hometown_region = 'AL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 20 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Sevierville', hometown_region = 'TN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 20 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Aberdeen', hometown_region = 'MD', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 20 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Windsor Heights', hometown_region = 'IA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 20 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Berglen', hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 21 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Stromsburg', hometown_region = 'NE', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 21 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Burlington', hometown_region = 'VT', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 21 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Porter', hometown_region = 'IN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 21 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Abingdon', hometown_region = NULL, hometown_country = 'United Kingdom' WHERE championship_year = 2025 AND contest_no = 21 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Bradenton', hometown_region = 'FL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 21 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Harper Woods', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 21 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Alexandria', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 21 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Louisville', hometown_region = 'KY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 21 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Charles Town', hometown_region = 'WV', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 21 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Louisville', hometown_region = 'KY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 22 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Woodland Park', hometown_region = 'CO', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 22 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Tauranga', hometown_region = 'Bay of Plenty', hometown_country = 'New Zealand' WHERE championship_year = 2025 AND contest_no = 22 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Summerville', hometown_region = 'SC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 22 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Pittsburgh', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 22 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Orting', hometown_region = 'WA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 22 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Ware', hometown_region = 'MA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 22 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Adliswil', hometown_region = 'Zürich', hometown_country = 'Switzerland' WHERE championship_year = 2025 AND contest_no = 22 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Statesville', hometown_region = 'NC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 23 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Hopewell', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 23 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Clarklake', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 23 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Talladega', hometown_region = 'AL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 23 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'New York', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 23 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Ypsilanti', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 23 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Pittsburgh', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 23 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Ruckersville', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 24 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Corvallis', hometown_region = 'OR', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 24 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Slippery Rock', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 24 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 24 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Boise', hometown_region = 'ID', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 24 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Durham', hometown_region = 'NC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 24 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Gulf Breeze', hometown_region = 'FL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 24 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Ashtabula', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 24 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = 'KY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 24 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Jacksonville', hometown_region = 'FL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 24 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Wexford', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 24 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = 'Woodland Hills', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 25 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Temple', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 25 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Jamestown', hometown_region = 'RI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 25 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Lake Balboa', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 25 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Princeton', hometown_region = 'WV', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 25 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Bluffton', hometown_region = 'SC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 25 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'New Kensington', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 25 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Sykesville', hometown_region = 'MD', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 25 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Leinfelden-Echterdingen', hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 25 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'New York', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 25 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Tuscaloosa', hometown_region = 'AL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 25 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = 'Christiana', hometown_region = 'TN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Fayetteville', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Lexington', hometown_region = 'KY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Woodland Park', hometown_region = 'CO', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Woodland Park', hometown_region = 'CO', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Tokyo', hometown_region = NULL, hometown_country = 'Japan' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Denver', hometown_region = 'CO', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Erlinsbach', hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Lexington', hometown_region = 'NC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Wichita', hometown_region = 'KS', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Jefferson', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = 'York', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = 'Herndon', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 13;
+UPDATE ENTRY SET hometown_city = 'Youngwood', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 14;
+UPDATE ENTRY SET hometown_city = 'Brooklyn', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 15;
+UPDATE ENTRY SET hometown_city = 'Plover', hometown_region = 'WI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 16;
+UPDATE ENTRY SET hometown_city = 'Knoxville', hometown_region = 'TN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 26 AND entry_no = 17;
+UPDATE ENTRY SET hometown_city = 'Schulenburg', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Fairborn', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Argos', hometown_region = 'IN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Schulenburg', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Fairborn', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Newport', hometown_region = 'RI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'West Chester', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Pulaski', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 8;
+UPDATE ENTRY SET hometown_city = 'Louisville', hometown_region = 'KY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 9;
+UPDATE ENTRY SET hometown_city = 'Cheshire', hometown_region = 'CT', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 10;
+UPDATE ENTRY SET hometown_city = 'Greenfield', hometown_region = 'IN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 11;
+UPDATE ENTRY SET hometown_city = 'Sandy Lake', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 12;
+UPDATE ENTRY SET hometown_city = 'Springfield', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 13;
+UPDATE ENTRY SET hometown_city = 'White Oak', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 14;
+UPDATE ENTRY SET hometown_city = 'Greenville', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 15;
+UPDATE ENTRY SET hometown_city = 'Wheaton', hometown_region = 'IL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 16;
+UPDATE ENTRY SET hometown_city = 'Clayton', hometown_region = 'NC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 17;
+UPDATE ENTRY SET hometown_city = 'Lakewood', hometown_region = 'CO', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 27 AND entry_no = 18;
+UPDATE ENTRY SET hometown_city = 'Cham', hometown_region = 'Bayern', hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 28 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Land O Lakes', hometown_region = 'WI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 28 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Seattle', hometown_region = 'WA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 28 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 28 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'New Martinsville', hometown_region = 'WV', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 29 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Murphy', hometown_region = 'NC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 29 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Los Angeles', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 30 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Lilienfeld', hometown_region = NULL, hometown_country = 'Austria' WHERE championship_year = 2025 AND contest_no = 30 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'North Hills', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 30 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Coopersburg', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 30 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Angier', hometown_region = 'NC', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 30 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'New Vineyard', hometown_region = 'ME', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 30 AND entry_no = 7;
+UPDATE ENTRY SET hometown_city = 'Jerusalem', hometown_region = NULL, hometown_country = 'Israel' WHERE championship_year = 2025 AND contest_no = 31 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Braunschweig', hometown_region = 'Lower Saxony', hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 31 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Austin', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 31 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Braunschweig', hometown_region = 'Lower Saxony', hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 31 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Levittown', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 32 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Toluca Lake', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 32 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Winnenden', hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 32 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Levittown', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 32 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Erie', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 32 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Gipf-Oberfrick', hometown_region = NULL, hometown_country = 'Switzerland' WHERE championship_year = 2025 AND contest_no = 32 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Napa', hometown_region = 'CA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 33 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Pittsburgh', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 33 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Manchaca', hometown_region = 'TX', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 33 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Richmond', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 33 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Eagle River', hometown_region = 'AK', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 33 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Kettering', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 33 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = 'WA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 34 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = NULL, hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 34 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Valley City', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 34 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Deltona', hometown_region = 'FL', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 34 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Pittsburgh', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 34 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Brooklyn Park', hometown_region = 'MN', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 35 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Williamsburg', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 35 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'New York', hometown_region = 'NY', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 35 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Granville', hometown_region = 'OH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 35 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Milford', hometown_region = 'NH', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 35 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Leinfelden-Echterdingen', hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 36 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Seattle', hometown_region = 'WA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 36 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Leinfelden-Echterdingen', hometown_region = NULL, hometown_country = 'Germany' WHERE championship_year = 2025 AND contest_no = 36 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Powhatan', hometown_region = 'VA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 37 AND entry_no = 1;
+UPDATE ENTRY SET hometown_city = 'Flint', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 37 AND entry_no = 2;
+UPDATE ENTRY SET hometown_city = 'Hudson', hometown_region = 'WI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 37 AND entry_no = 3;
+UPDATE ENTRY SET hometown_city = 'Brighton', hometown_region = 'MI', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 37 AND entry_no = 4;
+UPDATE ENTRY SET hometown_city = 'Toronto', hometown_region = 'Ontario', hometown_country = 'Canada' WHERE championship_year = 2025 AND contest_no = 37 AND entry_no = 5;
+UPDATE ENTRY SET hometown_city = 'Toronto', hometown_region = 'Ontario', hometown_country = 'Canada' WHERE championship_year = 2025 AND contest_no = 37 AND entry_no = 6;
+UPDATE ENTRY SET hometown_city = 'Smithton', hometown_region = 'PA', hometown_country = 'USA' WHERE championship_year = 2025 AND contest_no = 37 AND entry_no = 7;

@@ -1,4 +1,10 @@
-"""Explicit transactions for an isolated synthetic demo database only."""
+"""Explicit transactions (raw parameterised SQL) for the write operations.
+
+Safety comes from the rules inside each operation, not from a separate database:
+only contests that are Pending (results not published) can receive or lose entries,
+so published history is never changed.
+"""
+from decimal import Decimal
 import re
 import pymysql
 
@@ -13,10 +19,6 @@ def positive(value):
 
 def execute(conn, operation, **values):
     try:
-        with conn.cursor() as c:
-            c.execute('SELECT DATABASE() AS name')
-            if not re.fullmatch(r'wbmc_demo_[a-f0-9]{32}', c.fetchone()['name'] or ''):
-                raise ValueError('Writes require a separate synthetic demo database.')
         conn.begin()
         with conn.cursor() as c:
             if operation=='club':
@@ -30,12 +32,15 @@ def execute(conn, operation, **values):
                 c.execute('UPDATE CLUB SET membership_status=%s WHERE club_id=%s',(status,club))
                 c.execute('SELECT * FROM CLUB WHERE club_id=%s',(club,))
                 after=c.fetchone()
-            elif operation in ('register','delete'):
+            elif operation in ('register','delete','score'):
                 year=positive(values['year']); contest=positive(values['contest_no'])
                 c.execute('SELECT * FROM CONTEST WHERE championship_year=%s AND contest_no=%s FOR UPDATE',(year,contest))
                 target=c.fetchone()
                 if not target: raise ValueError('Contest does not exist.')
-                if target['result_status']!='Pending': raise ValueError('Published or non-pending results are protected.')
+                if target['result_status']!='Pending':
+                    if operation=='score':
+                        raise ValueError('Scores cannot be edited after results are published (Phase 3 transaction rule).')
+                    raise ValueError('Published or non-pending results are protected.')
                 if operation=='register':
                     if target['registration_status']!='Open': raise ValueError('Registration is not open.')
                     competitor=positive(values['competitor_id'])
@@ -47,6 +52,31 @@ def execute(conn, operation, **values):
                     number=c.fetchone()['n']; before=None
                     c.execute('INSERT INTO ENTRY (championship_year,contest_no,entry_no,competitor_id) VALUES (%s,%s,%s,%s)',(year,contest,number,competitor))
                     c.execute('SELECT * FROM ENTRY WHERE championship_year=%s AND contest_no=%s AND entry_no=%s',(year,contest,number))
+                    after=c.fetchone()
+                    # Optional club affiliation: blank means no REPRESENTS row is created.
+                    club=values.get('club_id')
+                    if club is not None:
+                        club=positive(club)
+                        c.execute('SELECT club_id FROM CLUB WHERE club_id=%s',(club,))
+                        if not c.fetchone(): raise ValueError('Club does not exist.')
+                        c.execute('SELECT club_id FROM REPRESENTS WHERE competitor_id=%s AND championship_year=%s',(competitor,year))
+                        if c.fetchone(): raise ValueError('Competitor already represents a club in this edition.')
+                        c.execute('INSERT INTO REPRESENTS (competitor_id,championship_year,club_id) VALUES (%s,%s,%s)',(competitor,year,club))
+                    after=dict(after); after['club_affiliation']=club
+                elif operation=='score':
+                    # UPDATE: record or correct one entry's score while its contest is still Pending.
+                    # Phase 3: "no score edits after result_status = Published" (checked above); score >= 0.
+                    # final_rank is not touched: Phase 3 states published_total_score does not determine final_rank.
+                    score=values['published_total_score']
+                    if score < 0 or score > Decimal('99999.99'): raise ValueError('Score must be between 0 and 99999.99.')
+                    number=positive(values['entry_no'])
+                    key=(year,contest,number)
+                    c.execute('SELECT * FROM ENTRY WHERE championship_year=%s AND contest_no=%s AND entry_no=%s FOR UPDATE',key)
+                    before=c.fetchone()
+                    if not before: raise ValueError('Entry does not exist.')
+                    if before['is_withdrawn']: raise ValueError('A withdrawn entry cannot be scored.')
+                    c.execute('UPDATE ENTRY SET published_total_score=%s WHERE championship_year=%s AND contest_no=%s AND entry_no=%s',(score,)+key)
+                    c.execute('SELECT * FROM ENTRY WHERE championship_year=%s AND contest_no=%s AND entry_no=%s',key)
                     after=c.fetchone()
                 else:
                     number=positive(values['entry_no'])
