@@ -6188,3 +6188,9 @@ SET @wbmc_competitor = COALESCE(@wbmc_competitor, LAST_INSERT_ID());
 INSERT INTO ENTRY (championship_year, contest_no, entry_no, competitor_id, published_total_score, final_rank) VALUES (2023, 27, 3, @wbmc_competitor, 45.5, 3);
 DROP TEMPORARY TABLE wbmc_2023_identities;
 COMMIT;
+
+-- Cleanup after the 2023 results load
+-- 1661 was a placeholder 2023 winner row; the scored results above replace it.
+DELETE FROM COMPETITOR WHERE competitor_id = 1661;
+-- The 2023 block stored empty strings; unknown last names are NULL everywhere else.
+UPDATE COMPETITOR SET last_name = NULL WHERE last_name = '';
