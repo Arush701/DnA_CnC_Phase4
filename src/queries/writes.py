@@ -32,7 +32,7 @@ def execute(conn, operation, **values):
                 c.execute('UPDATE CLUB SET membership_status=%s WHERE club_id=%s',(status,club))
                 c.execute('SELECT * FROM CLUB WHERE club_id=%s',(club,))
                 after=c.fetchone()
-            elif operation in ('register','delete','score'):
+            elif operation in ('register','delete','score','newcompetitor'):
                 year=positive(values['year']); contest=positive(values['contest_no'])
                 c.execute('SELECT * FROM CONTEST WHERE championship_year=%s AND contest_no=%s FOR UPDATE',(year,contest))
                 target=c.fetchone()
@@ -63,6 +63,38 @@ def execute(conn, operation, **values):
                         if c.fetchone(): raise ValueError('Competitor already represents a club in this edition.')
                         c.execute('INSERT INTO REPRESENTS (competitor_id,championship_year,club_id) VALUES (%s,%s,%s)',(competitor,year,club))
                     after=dict(after); after['club_affiliation']=club
+                elif operation=='newcompetitor':
+                    # INSERT: a new person plus their entry, with optional club, nickname and hometown,
+                    # all in one transaction (any failure rolls everything back).
+                    if target['registration_status']!='Open': raise ValueError('Registration is not open.')
+                    name=(values.get('name') or '').strip()
+                    if not name: raise ValueError('Enter the competitor name.')
+                    if len(name)>80: raise ValueError('The name is too long (80 characters at most).')
+                    nickname=(values.get('nickname') or '').strip() or None
+                    if nickname and len(nickname)>100: raise ValueError('The nickname is too long (100 characters at most).')
+                    city,region,country=((values.get(k) or '').strip() or None
+                                         for k in ('hometown_city','hometown_region','hometown_country'))
+                    if (city and len(city)>100) or (region and len(region)>100) or (country and len(country)>80):
+                        raise ValueError('A hometown field is too long.')
+                    club=values.get('club_id')
+                    if club is not None:
+                        club=positive(club)
+                        c.execute('SELECT club_id FROM CLUB WHERE club_id=%s',(club,))
+                        if not c.fetchone(): raise ValueError('Club does not exist.')
+                    c.execute('INSERT INTO COMPETITOR (first_name, last_name) VALUES (%s, NULL)',(name,))
+                    competitor=c.lastrowid
+                    c.execute('SELECT COALESCE(MAX(entry_no),0)+1 AS n FROM ENTRY WHERE championship_year=%s AND contest_no=%s',(year,contest))
+                    number=c.fetchone()['n']; before=None
+                    c.execute('INSERT INTO ENTRY (championship_year,contest_no,entry_no,competitor_id,hometown_city,hometown_region,hometown_country) VALUES (%s,%s,%s,%s,%s,%s,%s)',
+                              (year,contest,number,competitor,city,region,country))
+                    if club is not None:
+                        c.execute('INSERT INTO REPRESENTS (competitor_id,championship_year,club_id) VALUES (%s,%s,%s)',(competitor,year,club))
+                    if nickname:
+                        c.execute('INSERT INTO COMPETITOR_NICKNAME (competitor_id,nickname) VALUES (%s,%s)',(competitor,nickname))
+                    c.execute('SELECT * FROM COMPETITOR WHERE competitor_id=%s',(competitor,))
+                    person=c.fetchone()
+                    c.execute('SELECT * FROM ENTRY WHERE championship_year=%s AND contest_no=%s AND entry_no=%s',(year,contest,number))
+                    after={'competitor':person,'entry':c.fetchone(),'club_affiliation':club,'nickname':nickname}
                 elif operation=='score':
                     # UPDATE: record or correct one entry's score while its contest is still Pending.
                     # Phase 3: "no score edits after result_status = Published" (checked above); score >= 0.

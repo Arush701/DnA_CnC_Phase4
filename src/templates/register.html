@@ -1,0 +1,9 @@
+{% extends 'base.html' %}{% block title %}Register{% endblock %}
+{% block content %}<p class="eyebrow">REGISTRATION</p><h1>Register for a championship</h1>
+<p>Sign up for a contest that is still open for registration. Published results cannot be changed. Register a competitor who is already in the archive, or add a new one.</p>
+{% if error %}<p class="alert alert-danger" role="alert">{{ error }}</p>{% endif %}
+{% if result %}<div class="alert alert-success">Registration saved.</div><h2 class="h4">Saved record</h2><pre>{{ result.after }}</pre>{% endif %}
+<div class="row g-4 mt-2">{% for kind,title,fields in [('existing','Register an existing competitor',['year','contest_no','competitor_id','club_id']),('new','Register a new competitor',['year','contest_no','name','club_id','nickname','hometown_city','hometown_region','hometown_country'])] %}
+<section class="col-md-6"><h2 class="h4">{{ title }}</h2><form method="post" action="/register/{{ kind }}" class="filter-panel">
+{% for field in fields %}<label class="form-label mt-2" for="{{ kind }}-{{ field }}">{% if field=='name' %}Competitor name{% else %}{{ field|replace('_',' ')|title }}{% endif %}{% if field in ['club_id','nickname','hometown_city','hometown_region','hometown_country'] %} (optional){% endif %}</label><input class="form-control" {% if field in ['name','nickname','hometown_city','hometown_region','hometown_country'] %}type="text" maxlength="{{ {'name':80,'nickname':100,'hometown_city':100,'hometown_region':100,'hometown_country':80}[field] }}"{% else %}type="number" min="1"{% endif %} id="{{ kind }}-{{ field }}" name="{{ field }}"{% if field not in ['club_id','nickname','hometown_city','hometown_region','hometown_country'] %} required{% endif %}>{% endfor %}
+<button class="btn btn-primary mt-3">{{ title }}</button></form></section>{% endfor %}</div>{% endblock %}
