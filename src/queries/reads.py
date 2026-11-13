@@ -1,4 +1,4 @@
-"""Eight read-only features. Caller supplies a PyMySQL DictCursor connection.
+"""Nine read-only features. Caller supplies a PyMySQL DictCursor connection.
 
 All values are bound parameters. Only fixed, allowlisted SQL fragments are composed.
 No function commits, changes session state, or performs DML/DDL.
@@ -6,6 +6,7 @@ No function commits, changes session state, or performs DML/DDL.
 NAME = "CONCAT_WS(' ', c.first_name, NULLIF(c.middle_name, ''), NULLIF(c.last_name, ''))"
 COLLATION = 'utf8mb4_0900_as_cs'
 BRACKETS = {'Moustache', 'Partial Beard', 'Full Beard', 'Craft'}
+CLUB_STATUSES = ('Active', 'Inactive', 'Unknown')
 ENTRY_COUNTS = '''SELECT championship_year, contest_no, COUNT(*) AS result_entries
     FROM ENTRY GROUP BY championship_year, contest_no'''
 
@@ -73,15 +74,22 @@ def competitor_search(conn, name, *, year=None, limit=50, offset=0):
 
 
 def championship_history(conn, *, year=None):
-    """One row per edition/category; editions with no contests remain visible."""
+    """One row per edition/category; editions with no contests remain visible.
+
+    Also carries each edition's cancellation reason and its rescheduling link in either
+    direction (RESCHEDULED_TO is one-to-one, so the joins add no duplicate rows).
+    """
     where, params = '', []
     if year is not None:
         where = 'WHERE h.championship_year = %s'
         params.append(_integer(year, 'year', 1, 32767))
     return _fetch(conn, f'''SELECT h.championship_year, h.status, h.start_date, h.end_date,
+        h.cancellation_reason, rt.replacement_year, rf.cancelled_year AS replaces_year,
         k.category_id, k.category_name, k.bracket, k.rule_version, t.contest_no,
         COALESCE(n.result_entries, 0) AS result_entries
         FROM CHAMPIONSHIP h
+        LEFT JOIN RESCHEDULED_TO rt ON rt.cancelled_year = h.championship_year
+        LEFT JOIN RESCHEDULED_TO rf ON rf.replacement_year = h.championship_year
         LEFT JOIN CONTEST t ON t.championship_year = h.championship_year
         LEFT JOIN CATEGORY k ON k.category_id = t.category_id
         LEFT JOIN ({ENTRY_COUNTS}) n ON n.championship_year = t.championship_year
@@ -114,6 +122,36 @@ def contest_judges(conn, year, category_id):
         JOIN CONTEST t ON t.championship_year = a.championship_year AND t.contest_no = a.contest_no
         WHERE t.championship_year = %s AND t.category_id = %s
         ORDER BY j.full_name''', [_integer(year, 'year', 1, 32767), _integer(category_id, 'category_id')])
+
+
+def clubs(conn, *, status=None):
+    """Clubs with every stored attribute and the derived ones (Phase 1, 3.1.1).
+
+    status: None lists every club; 'Active', 'Inactive' or 'Unknown' lists clubs with that
+    stored membership status; 'Not recorded' lists clubs with no status stored (the website
+    publishes none). titles_won counts first-place, non-withdrawn entries by competitors who
+    represented the club in that edition (REPRESENTS), so it is 0 where no representation
+    is recorded. social_links joins the multi-valued CLUB_SOCIAL_LINK values.
+    """
+    where, params = [], []
+    if status is not None:
+        if status == 'Not recorded':
+            where.append('b.membership_status IS NULL')
+        elif status in CLUB_STATUSES:
+            where.append('b.membership_status = %s')
+            params.append(status)
+        else:
+            raise ValueError('Unknown membership status')
+    where_sql = ('WHERE ' + ' AND '.join(where)) if where else ''
+    return _fetch(conn, f'''SELECT b.club_id, b.club_name, b.club_type, b.country, b.founded_year,
+        b.membership_status, b.contact_email,
+        (SELECT GROUP_CONCAT(l.social_link ORDER BY l.social_link SEPARATOR ', ')
+            FROM CLUB_SOCIAL_LINK l WHERE l.club_id = b.club_id) AS social_links,
+        (SELECT COUNT(*) FROM REPRESENTS r JOIN ENTRY e ON e.competitor_id = r.competitor_id
+            AND e.championship_year = r.championship_year
+            WHERE r.club_id = b.club_id AND e.final_rank = 1 AND e.is_withdrawn = 0) AS titles_won
+        FROM CLUB b {where_sql}
+        ORDER BY b.club_name COLLATE {COLLATION}, b.club_id''', params)
 
 
 def category_search(conn, text='', *, bracket=None, year=None):

@@ -12,7 +12,7 @@
   <nav class="container py-3 d-flex flex-wrap align-items-center gap-3" aria-label="Main navigation">
     <a class="brand me-auto" href="/">WBMC <span>THE RESULTS ARCHIVE</span></a>
     <div class="d-flex flex-wrap gap-3 nav-links">
-      {% for path,label in [('/championships','Championships'),('/competitors','Competitors'),('/categories','Categories'),('/results','Results'),('/reports','Reports'),('/register','Register'),('/admin','Admin')] %}
+      {% for path,label in [('/championships','Championships'),('/competitors','Competitors'),('/categories','Categories'),('/clubs','Clubs'),('/results','Results'),('/reports','Reports'),('/register','Register'),('/admin','Admin')] %}
       <a href="{{ path }}" {% if request.url.path==path %}aria-current="page"{% endif %}>{{ label }}</a>
       {% endfor %}
     </div>

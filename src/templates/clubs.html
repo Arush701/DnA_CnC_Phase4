@@ -1,0 +1,8 @@
+{% extends 'base.html' %}{% block title %}Clubs{% endblock %}
+{% block content %}
+<p class="eyebrow">THE CLUBS</p><h1>Beard and moustache clubs</h1><p class="text-secondary">Clubs that host editions or represent competitors. Membership status is an administrative value kept by this database, not one published by the WBMC website, so most clubs have none recorded.</p>
+<form method="get" class="filter-panel row g-3 align-items-end"><div class="col-md-4"><label class="form-label" for="status">Membership status</label><select class="form-select" id="status" name="status"><option value="">All clubs</option>{% for s in statuses %}<option value="{{ s }}" {% if s==status %}selected{% endif %}>{{ s }}</option>{% endfor %}</select></div><div class="col-md-2"><button class="btn btn-primary w-100">Filter</button></div></form>
+<div class="table-responsive mt-4"><table class="table align-middle"><caption>{{ rows|length }} clubs{% if status %} with status: {{ status }}{% endif %}</caption><thead><tr><th scope="col">Club</th><th scope="col">Type</th><th scope="col">Country</th><th scope="col">Founded</th><th scope="col">Membership status</th><th scope="col">Contact</th><th scope="col">Social links</th><th scope="col">Titles won</th></tr></thead><tbody>
+{% for r in rows %}<tr><th scope="row">{{ r.club_name }}</th><td>{{ r.club_type or '—' }}</td><td>{{ r.country or '—' }}</td><td>{{ r.founded_year or '—' }}</td><td>{{ r.membership_status or 'Not recorded' }}</td><td>{{ r.contact_email or '—' }}</td><td>{{ r.social_links or '—' }}</td><td>{{ r.titles_won }}</td></tr>{% else %}<tr><td colspan="8">No clubs match this status.</td></tr>{% endfor %}
+</tbody></table></div>
+{% endblock %}

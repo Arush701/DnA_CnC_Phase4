@@ -22,7 +22,8 @@ CREATE TABLE CLUB (
     founded_year      SMALLINT     NULL,
     membership_status VARCHAR(40)  NULL,
     contact_email     VARCHAR(255) NULL,
-    CONSTRAINT uq_club_name UNIQUE (club_name)
+    CONSTRAINT uq_club_name UNIQUE (club_name),
+    CONSTRAINT chk_club_founded CHECK (founded_year IS NULL OR founded_year BETWEEN 1800 AND 2100)
 );
 
 CREATE TABLE CLUB_SOCIAL_LINK (
@@ -94,12 +95,13 @@ CREATE TABLE CATEGORY (
     category_name VARCHAR(150) NOT NULL,
     rule_version  VARCHAR(30)  NOT NULL,
     bracket       ENUM('Moustache', 'Partial Beard', 'Full Beard', 'Craft') NOT NULL,
-    styling_aids  ENUM('None', 'Moustache only', 'Allowed') NOT NULL DEFAULT 'None',
+    styling_aids  ENUM('None', 'Moustache only', 'Allowed') NULL,
     is_freestyle  BOOLEAN NOT NULL DEFAULT FALSE,
     min_age       TINYINT UNSIGNED NULL,
     max_age       TINYINT UNSIGNED NULL,
     description   TEXT NULL,
-    CONSTRAINT uq_category_name_version UNIQUE (category_name, rule_version)
+    CONSTRAINT uq_category_name_version UNIQUE (category_name, rule_version),
+    CONSTRAINT chk_category_age CHECK (min_age IS NULL OR max_age IS NULL OR min_age <= max_age)
 );
 
 CREATE TABLE CATEGORY_ALIAS (
@@ -123,6 +125,7 @@ CREATE TABLE PARTIAL_BEARD_CATEGORY (
     min_length_cm     DECIMAL(5,1) NULL,
     max_length_cm     DECIMAL(5,1) NULL,
     style_description VARCHAR(255) NULL,
+    CONSTRAINT chk_pbeard_len CHECK (min_length_cm IS NULL OR max_length_cm IS NULL OR min_length_cm <= max_length_cm),
     CONSTRAINT fk_pbeard_category FOREIGN KEY (category_id) REFERENCES CATEGORY (category_id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -132,6 +135,7 @@ CREATE TABLE FULL_BEARD_CATEGORY (
     min_length_cm DECIMAL(5,1) NULL,
     max_length_cm DECIMAL(5,1) NULL,
     beard_style   VARCHAR(100) NULL,
+    CONSTRAINT chk_fbeard_len CHECK (min_length_cm IS NULL OR max_length_cm IS NULL OR min_length_cm <= max_length_cm),
     CONSTRAINT fk_fbeard_category FOREIGN KEY (category_id) REFERENCES CATEGORY (category_id)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -221,6 +225,7 @@ CREATE TABLE ENTRY (
     CONSTRAINT uq_entry_competitor_year UNIQUE (competitor_id, championship_year),
     CONSTRAINT chk_entry_no CHECK (entry_no >= 1),
     CONSTRAINT chk_entry_rank CHECK (final_rank IS NULL OR final_rank >= 1),
+    CONSTRAINT chk_entry_score CHECK (published_total_score IS NULL OR published_total_score >= 0),
     CONSTRAINT fk_entry_contest FOREIGN KEY (championship_year, contest_no) REFERENCES CONTEST (championship_year, contest_no)
         ON DELETE CASCADE ON UPDATE CASCADE,
     -- history is kept: a competitor with entries cannot be deleted

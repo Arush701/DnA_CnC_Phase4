@@ -30,7 +30,9 @@ def edition_summary(rows):
     editions = {}
     for row in rows:
         item = editions.setdefault(row['championship_year'], {'year':row['championship_year'],
-            'status':row['status'], 'categories':0, 'entries':0})
+            'status':row['status'], 'categories':0, 'entries':0,
+            'reason':row.get('cancellation_reason'), 'replacement_year':row.get('replacement_year'),
+            'replaces_year':row.get('replaces_year')})
         item['categories'] += row['category_id'] is not None
         item['entries'] += row['result_entries']
     return list(editions.values())
@@ -65,6 +67,15 @@ def categories(request: Request, q: str=Query('',max_length=255), bracket: str=Q
     return render(request,'categories',rows=rows,q=q,bracket=bracket,year=year,brackets=sorted(reads.BRACKETS))
 
 
+@router.get('/clubs')
+def clubs(request: Request, status: str=Query('',max_length=20), db=Depends(get_read_db)):
+    choices = list(reads.CLUB_STATUSES) + ['Not recorded']
+    if status and status not in choices:
+        raise HTTPException(400,'Choose a listed membership status.')
+    rows = reads.clubs(db,status=status or None)
+    return render(request,'clubs',rows=rows,status=status,statuses=choices)
+
+
 @router.get('/results')
 def results(request: Request, year: str=Query('',max_length=5), category_id: str=Query('',max_length=10),
             db=Depends(get_read_db)):
@@ -82,7 +93,8 @@ def results(request: Request, year: str=Query('',max_length=5), category_id: str
     rows = reads.rankings(db,selected_year,selected['category_id']) if selected else []
     tied = {rank for rank,count in Counter(r['final_rank'] for r in rows).items() if rank is not None and count>1}
     judges = reads.contest_judges(db,selected_year,selected['category_id']) if selected else []
-    return render(request,'results',editions=editions,year=selected_year,categories=categories,
+    edition = next((e for e in editions if e['year']==selected_year),None)
+    return render(request,'results',editions=editions,edition=edition,year=selected_year,categories=categories,
         selected=selected,rows=rows,tied=tied,judges=judges)
 
 

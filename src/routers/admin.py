@@ -1,5 +1,6 @@
 """Write forms. Organiser actions (/admin) need a shared secret submitted with each operation and never
 persisted; public registration (/register) does not, but is still switched off unless WBMC_ADMIN_ENABLED=1."""
+from datetime import date
 from decimal import Decimal, InvalidOperation
 import hmac
 import os
@@ -24,14 +25,28 @@ def perform(operation, values):
 
 
 REGISTER_KINDS={'existing':'register','new':'newcompetitor'}
-ADMIN_OPERATIONS=('club','delete','score','judge')
-TEXT_FIELDS=('name','nickname','hometown_city','hometown_region','hometown_country')
+ADMIN_OPERATIONS=('club','delete','score','judge','edition','reschedule')
+TEXT_FIELDS=('first_name','last_name','nickname','hometown_city','hometown_region','hometown_country')
+
+
+def parse_date(text, label):
+    """Blank means 'not given'; otherwise an ISO date (what a browser date box submits)."""
+    text=text.strip()
+    if not text: return None
+    try: return date.fromisoformat(text)
+    except ValueError: raise ValueError(f'{label} must be a valid date.') from None
+
+
+def optional_id(fields, name):
+    text=fields.get(name,[''])[0].strip()
+    return int(text) if text else None
 
 
 def parse(operation, fields):
     names={'register':('year','contest_no','competitor_id'),'club':('club_id','status'),
            'delete':('year','contest_no','entry_no'),'score':('year','contest_no','entry_no'),
-           'newcompetitor':('year','contest_no'),'judge':('year','contest_no')}.get(operation)
+           'newcompetitor':('year','contest_no'),'judge':('year','contest_no'),
+           'edition':('year',),'reschedule':('year',)}.get(operation)
     if names is None: raise ValueError('Unknown operation.')
     values={name:fields.get(name,[''])[0] for name in names}
     for name in names:
@@ -49,6 +64,17 @@ def parse(operation, fields):
             values[name]=fields.get(name,[''])[0].strip()
         judge=fields.get('judge_id',[''])[0].strip()
         values['judge_id']=int(judge) if judge else None
+    if operation in ('edition','reschedule'):  # blank dates and reason mean "not given"
+        values['status']=fields.get('status',[''])[0].strip()
+        values['start_date']=parse_date(fields.get('start_date',[''])[0],'The start date')
+        values['end_date']=parse_date(fields.get('end_date',[''])[0],'The end date')
+        values['cancellation_reason']=fields.get('cancellation_reason',[''])[0].strip()
+    if operation=='edition':  # INSERT-1: optional website, host club and venue
+        values['website_url']=fields.get('website_url',[''])[0].strip()
+        values['host_club_id']=optional_id(fields,'host_club_id')
+        values['venue_id']=optional_id(fields,'venue_id')
+    if operation=='reschedule':  # UPDATE-2: optional replacement edition for a cancelled one
+        values['replacement_year']=optional_id(fields,'replacement_year')
     if operation in ('register','newcompetitor'):  # optional field: blank means "no club"
         club=fields.get('club_id',[''])[0].strip()
         values['club_id']=int(club) if club else None

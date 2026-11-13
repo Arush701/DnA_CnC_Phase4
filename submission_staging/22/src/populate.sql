@@ -4,6 +4,27 @@
 -- Quarantined ambiguous identities and placement markers are intentionally excluded.
 SET NAMES utf8mb4;
 
+INSERT INTO VENUE (venue_id, venue_name, street, city, region, postal_code, country, capacity) VALUES
+    (1, NULL, NULL, 'Höfen/Enz', NULL, NULL, 'Germany', NULL),
+    (2, NULL, NULL, 'Pforzheim', NULL, NULL, 'Germany', NULL),
+    (3, NULL, NULL, 'Trondheim', NULL, NULL, 'Norway', NULL),
+    (4, NULL, NULL, 'Ystad', NULL, NULL, 'Sweden', NULL),
+    (5, NULL, NULL, 'Schömberg', NULL, NULL, 'Germany', NULL),
+    (6, NULL, NULL, 'Carson City', 'Nevada', NULL, 'USA', NULL),
+    (7, NULL, NULL, 'Berlin', NULL, NULL, 'Germany', NULL),
+    (8, NULL, NULL, 'Brighton', NULL, NULL, 'England', NULL),
+    (9, NULL, NULL, 'Anchorage', 'Alaska', NULL, 'USA', NULL),
+    (10, NULL, NULL, 'Leinfelden-Echterdingen', NULL, NULL, 'Germany', NULL),
+    (11, NULL, NULL, 'Leogang', NULL, NULL, 'Austria', NULL),
+    (12, NULL, NULL, 'Austin', 'Texas', NULL, 'USA', NULL),
+    (13, NULL, NULL, 'Antwerp', NULL, NULL, 'Belgium', NULL),
+    (14, NULL, NULL, 'Auckland', NULL, NULL, 'New Zealand', NULL),
+    (15, NULL, NULL, 'Burghausen', NULL, NULL, 'Germany', NULL),
+    (16, NULL, NULL, 'Pittsburgh', 'Pennsylvania', NULL, 'USA', NULL),
+    (17, NULL, NULL, 'Blackpool', NULL, NULL, 'England', NULL),
+    (18, NULL, NULL, 'Spokane', 'Washington', NULL, 'USA', NULL);
+
+
 INSERT INTO CHAMPIONSHIP (championship_year, status, start_date, end_date, cancellation_reason, website_url) VALUES
     (1990, 'Held', NULL, NULL, NULL, NULL),
     (1995, 'Held', NULL, NULL, NULL, NULL),
@@ -4001,4 +4022,71 @@ INSERT INTO ENTRY (championship_year, contest_no, entry_no, competitor_id, homet
     (2023, 4, 1, 1664, NULL, NULL, NULL, NULL, 1, NULL, 0),
     (2023, 1, 1, 1665, NULL, NULL, NULL, NULL, 1, NULL, 0),
     (2023, 3, 1, 1666, NULL, NULL, NULL, NULL, 1, NULL, 0);
+
+INSERT INTO BEST_IN_SHOW (championship_year, contest_no, entry_no, award_division) VALUES
+    (1999,  7, 1, 'Overall'),      -- Karl-Heinz Hille, Imperial Partial Beard
+    (2011,  1, 1, 'Overall'),      -- Elmar Weisser, Full Beard Freestyle
+    (2017,  9, 1, 'Overall'),      -- Jason Kiley, entered in Full Beard Freestyle
+    (2019, 14, 7, 'Men'),          -- Eugen Hipp, Imperial Moustache
+    (2019,  4, 1, 'Women'),        -- Muege/Müge Mete, Realistic Moustache
+    (2023,  4, 1, 'Beardsmen'),    -- Norbert Topf, Freestyle Cheekbeard
+    (2025, 11, 1, 'Men'),          -- Trevor Mustafa, Full Beard Natural 20 - 30 cm
+    (2025,  1, 1, 'Women');        -- Kristin Wagner, Craft Creative Beard
+
+
+INSERT INTO CLUB (club_id, club_name, club_type, country, founded_year, membership_status, contact_email) VALUES
+    (1,  'Mad Viking Beard Club Pennsylvania',            NULL,                                  'USA',            NULL, NULL, NULL),
+    (2,  'Ostbayerische Bart- und Schnauzerclub',         'Beard and moustache club',            'Germany',        1996, NULL, NULL),
+    (3,  'The Fellowship of the Beard NZ',                'Community',                           'New Zealand',    NULL, NULL, NULL),
+    (4,  'Snorrenclub Antwerpen',                         'Moustache club',                      'Belgium',        NULL, NULL, NULL),
+    (5,  'Austin Facial Hair Club',                       'Facial hair club',                    'USA',            NULL, NULL, 'austinfacialhairclub@gmail.com'),
+    (6,  'Bart & Kultur Club "Belle Moustache" eV',       'Beard and culture club',              'Germany',        2002, NULL, NULL),
+    (7,  'Den Norske Mustach-club av -91',                'Moustache club',                      'Norway',         NULL, NULL, NULL),
+    (8,  'South Central Alaska Beard and Moustache Club', 'Beard and moustache club',            'USA',            NULL, NULL, NULL),
+    (9,  'The Handlebar Club',                            'Gentlemen''s club and moustache club','United Kingdom', 1947, NULL, NULL),
+    (10, 'First Berliner Beard Club',                     NULL,                                  'Germany',        NULL, NULL, NULL),
+    (11, 'Beard Team USA',                                'Community advocacy organization',     'USA',            NULL, NULL, NULL),
+    (12, 'Svenska Mustaschklubben',                       'Moustache club',                      'Sweden',         1984, NULL, NULL);
+
+INSERT INTO CLUB_SOCIAL_LINK (club_id, social_link) VALUES
+    (2,  'https://bcostbayern.de/'),
+    (5,  'https://www.austinfacialhairclub.com/'),
+    (5,  'https://www.facebook.com/austinfacialhairclub'),
+    (5,  'https://instagram.com/austinfacialhairclub'),
+    (5,  'https://www.twitch.tv/austinfacialhairclub'),
+    (5,  'https://www.flickr.com/people/131537946@N03/'),
+    (8,  'https://www.facebook.com/SCAKBMC/'),
+    (9,  'https://handlebarclub.co.uk/'),
+    (11, 'https://www.beardteamusa.org/');
+
+UPDATE CHAMPIONSHIP SET venue_id = 1 WHERE championship_year = 1990;  -- Höfen/Enz, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 2 WHERE championship_year = 1995;  -- Pforzheim, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 3 WHERE championship_year IN (1997, 2011);  -- Trondheim, Norway
+UPDATE CHAMPIONSHIP SET venue_id = 4 WHERE championship_year = 1999;  -- Ystad, Sweden
+UPDATE CHAMPIONSHIP SET venue_id = 5 WHERE championship_year = 2001;  -- Schömberg, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 6 WHERE championship_year = 2003;  -- Carson City, Nevada, USA
+UPDATE CHAMPIONSHIP SET venue_id = 7 WHERE championship_year = 2005;  -- Berlin, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 8 WHERE championship_year = 2007;  -- Brighton, England
+UPDATE CHAMPIONSHIP SET venue_id = 9 WHERE championship_year = 2009;  -- Anchorage, Alaska, USA
+UPDATE CHAMPIONSHIP SET venue_id = 10 WHERE championship_year = 2013;  -- Leinfelden-Echterdingen, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 11 WHERE championship_year = 2015;  -- Leogang, Austria
+UPDATE CHAMPIONSHIP SET venue_id = 12 WHERE championship_year = 2017;  -- Austin, Texas, USA
+UPDATE CHAMPIONSHIP SET venue_id = 13 WHERE championship_year = 2019;  -- Antwerp, Belgium
+UPDATE CHAMPIONSHIP SET venue_id = 14 WHERE championship_year = 2021;  -- Auckland, New Zealand
+UPDATE CHAMPIONSHIP SET venue_id = 15 WHERE championship_year = 2023;  -- Burghausen, Germany
+UPDATE CHAMPIONSHIP SET venue_id = 16 WHERE championship_year = 2025;  -- Pittsburgh, Pennsylvania, USA
+UPDATE CHAMPIONSHIP SET venue_id = 17 WHERE championship_year = 2027;  -- Blackpool, England
+UPDATE CHAMPIONSHIP SET venue_id = 18 WHERE championship_year = 2029;  -- Spokane, Washington, USA
+ 
+
+
+INSERT INTO COMPETITOR_NICKNAME (competitor_id, nickname) VALUES
+    (198, 'Ghost'),         -- Corey Giehl, Fairborn, OH, USA
+    (446, 'Memo');          -- Mehmet Mete, Braunschweig, Germany
+    
+-- populate.sql: CHAMPIONSHIP_PHOTO_CREDIT
+INSERT INTO CHAMPIONSHIP_PHOTO_CREDIT (championship_year, photo_credit) VALUES
+    (2017, 'Greg Anderson'),
+    (2019, 'bartweltmeister.de'),
+    (2025, 'Greg Anderson Photography');
 

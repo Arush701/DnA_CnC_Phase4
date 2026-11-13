@@ -1,91 +1,94 @@
 # WBMC Phase 4 - Team 22
 
-A MySQL-backed web application for the archive of the World Beard and Moustache
-Championships (WBMC, <https://www.worldbeardchampionships.com/>). It has seven
-READ operations and three WRITE operations (insert, update, delete), all written
-as raw parameterised SQL.
+A web application for the World Beard and Moustache Championships (WBMC,
+<https://www.worldbeardchampionships.com/>) archive. It stores the data in a MySQL
+database and shows it on web pages. All database access is written as plain SQL
+with parameters. The features are shown in the demo video.
 
-## 1. Paradigm, DBMS and versions
+## 1. What we used
 
-- Paradigm: relational. DBMS: MySQL 8.4 (8.x is fine; window functions and
-  triggers are used, so MySQL 5.7 and MariaDB are not supported).
+- Database: MySQL 8.4 (relational). Any MySQL 8.x works. MySQL 5.7 and MariaDB do
+  not, because the schema uses triggers and window functions.
 - Python 3.11 or newer.
+- Backend: FastAPI with PyMySQL (plain SQL, no ORM) and Uvicorn.
+- Frontend: Jinja2 templates with Bootstrap from a CDN. There is nothing to build.
 
-## 2. Stack
+## 2. Changes from the Phase 3 design
 
-- Backend: FastAPI with PyMySQL (no ORM) and Uvicorn.
-- Frontend: server-rendered Jinja2 templates with Bootstrap loaded from a CDN.
-  There is no frontend build step.
+Phase 2 (EER) was done by Team 18 and Phase 3 (relational model) by Team 9. Our
+changes to their design:
 
-## 3. Design Changes
+- `CATEGORY.styling_aids` can now be empty (NULL). The website does not tell us
+  which categories allow styling aids. The old default, `'None'`, would have wrongly
+  said that none of them do.
+- A competitor's name is split into `first_name` (required), `middle_name` and
+  `last_name` (optional, because some competitors have one name only). `email` and
+  `birth_date` are kept but are empty for the old data.
+- `CLUB.membership_status` can be empty. The site accepts Active, Inactive and
+  Unknown. Empty means "not recorded", and that is the case for all 12 clubs.
+- A category is always one of four kinds: Moustache, Partial Beard, Full Beard or
+  Craft. Triggers keep this true, and the view `v_category_integrity` lists any
+  category that breaks the rule.
+- In `RESCHEDULED_TO` the year columns have no cascading foreign-key actions,
+  because MySQL does not allow a CHECK on such columns.
 
-Phase 2 (EER) was done by Team 18; Phase 3 (relational model) by Team 9.
+## 3. How to set it up and run it
 
-Significant changes to the Phase 3 design, each with a one-line reason:
+Run everything from the main project folder. It works on Linux, macOS and Windows.
 
-- TODO: list every change here (constraints removed or added, columns altered,
-  triggers and the `v_category_integrity` view that enforce the CATEGORY
-  specialization, anything else that differs from Phase 3).
+### 3.1 Install MySQL and Python
 
-## 4. Setup and run
+Install MySQL 8.x (8.4 is best) and Python 3.11 or newer. Check that the `mysql`
+command works by running `mysql --version`.
 
-Everything below runs from the repository root, on Linux, macOS or Windows.
+### 3.2 Create the database user
 
-### 4.1 Install MySQL 8.x
-
-Install MySQL 8.x (8.4 recommended) and Python 3.11 or newer with your operating
-system's package manager or the installers from <https://dev.mysql.com/downloads/>.
-Make sure the `mysql` command-line client works (`mysql --version`).
-
-### 4.2 Create the database and user
-
-Log in as an administrator (usually `root`) and run the following, choosing your
-own password in place of `choose_a_db_password`:
+Log in as the MySQL admin (usually `root`, with `mysql -u root -p`) and run this.
+Pick your own password instead of `choose_a_db_password`:
 
 ```sql
 SET GLOBAL log_bin_trust_function_creators = 1;
-CREATE DATABASE wbmc_db CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 CREATE USER 'wbmc'@'localhost' IDENTIFIED BY 'choose_a_db_password';
 GRANT ALL ON wbmc_db.* TO 'wbmc'@'localhost';
 ```
 
-For example, `mysql -u root -p` opens the client; paste the statements there.
+The first line is needed. Without it MySQL refuses to create the triggers (error
+1419). It lasts until MySQL restarts. To keep it, add
+`log_bin_trust_function_creators=1` under `[mysqld]` in the MySQL config file.
 
-`log_bin_trust_function_creators = 1` is required: without it MySQL refuses to
-create the schema's triggers (error 1419). `SET GLOBAL` lasts until the server
-restarts; to make it permanent add `log_bin_trust_function_creators=1` under
-`[mysqld]` in the MySQL configuration file.
+You do not create the database yourself: `schema.sql` does it.
 
-### 4.3 Create the tables and load the data
+### 3.3 Create the tables and load the data
 
-Use a new, empty `wbmc_db`. `populate.sql` does not delete anything, so loading it
-twice fails with duplicate keys. To start over, drop and recreate the database
-(step 4.2) first.
+Run these two commands in this order:
 
 ```sh
-mysql -u wbmc -p wbmc_db -e "SOURCE src/schema.sql"
+mysql -u wbmc -p -e "SOURCE src/schema.sql"
 mysql -u wbmc -p wbmc_db -e "SOURCE src/populate.sql"
 ```
 
-`SOURCE` works the same on every operating system (use forward slashes in the
-path). A successful load prints nothing. Check it:
+`schema.sql` deletes and recreates `wbmc_db`, so you always start from an empty
+database. `populate.sql` only adds data. If you run it twice you get duplicate-key
+errors, so to start again, run `schema.sql` first. A good load prints nothing.
+
+Check the load:
 
 ```sh
-mysql -u wbmc -p wbmc_db -e "SELECT COUNT(*) FROM ENTRY; SELECT COUNT(*) FROM VENUE; SELECT COUNT(*) FROM CLUB; SELECT COUNT(*) FROM BEST_IN_SHOW; SELECT COUNT(*) FROM ENTRY WHERE hometown_country IS NOT NULL;"
+mysql -u wbmc -p wbmc_db -e "SELECT COUNT(*) FROM ENTRY; SELECT COUNT(*) FROM CATEGORY; SELECT COUNT(*) FROM CONTEST; SELECT COUNT(*) FROM VENUE; SELECT COUNT(*) FROM CLUB; SELECT COUNT(*) FROM BEST_IN_SHOW; SELECT COUNT(*) FROM ENTRY WHERE hometown_country IS NOT NULL;"
 ```
 
-Expected: 1619 entries, 18 venues, 12 clubs, 8 Best in Show rows, and 826 entries
-with a hometown. (Other counts: 19 championships, 245 contests, 1619 competitors,
-1 rescheduling.)
+You should see: 1893 entries, 262 categories, 266 contests, 18 venues, 12 clubs,
+9 Best in Show rows and 826 entries with a hometown. Other counts: 19 championships,
+1893 competitors and 1 rescheduling.
 
-### 4.4 Install the Python dependencies
+### 3.4 Install the Python packages
 
 Linux or macOS:
 
 ```sh
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r src/requirements.txt cryptography
+python -m pip install -r src/requirements.txt
 ```
 
 Windows (Command Prompt):
@@ -93,15 +96,13 @@ Windows (Command Prompt):
 ```bat
 py -m venv .venv
 .venv\Scripts\activate
-python -m pip install -r src\requirements.txt cryptography
+python -m pip install -r src\requirements.txt
 ```
 
-(`cryptography` is needed for MySQL 8's default login method.)
+### 3.5 Create the `.env` file
 
-### 4.5 Configure `.env`
-
-Create a plain-text file named `.env` in the repository root with these lines
-(never commit it), using the database password from step 4.2:
+Make a text file called `.env` in the main folder. A template is in `.env.example`.
+Use the password from step 3.2:
 
 ```
 DB_HOST=127.0.0.1
@@ -113,57 +114,86 @@ WBMC_ADMIN_ENABLED=1
 WBMC_ADMIN_TOKEN=choose_an_admin_token
 ```
 
-Change `DB_PORT` if your MySQL does not use 3306. Variables set in the shell
-override `.env`. The admin pages are off unless `WBMC_ADMIN_ENABLED=1` and a token
-is set.
+Change `DB_PORT` if your MySQL does not use 3306. Never commit `.env`: it holds the
+database password and the admin token.
 
-### 4.6 Run the application
+### 3.6 Start the app
 
 ```sh
 python -m uvicorn src.app:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Open <http://127.0.0.1:8000>. The administration page is at
-<http://127.0.0.1:8000/admin> and asks for the admin token on every operation.
-Stop the server with Ctrl+C.
+Open <http://127.0.0.1:8000>. Press Ctrl+C to stop. Two health pages exist:
+`/api/health` (the app) and `/api/health/db` (the database).
 
-Health checks: `/api/health` (application) and `/api/health/db` (database).
+## 4. Who can change data (admin token)
 
-## 5. Features
+- **Admin page** (`/admin`): it works only if `.env` has `WBMC_ADMIN_ENABLED=1` and a
+  `WBMC_ADMIN_TOKEN`. You choose the token yourself (any private text). Type it in
+  the "Local admin token" box on each form. It is checked every time and is never
+  saved in the database or in a cookie. A wrong token, or the setting being off,
+  gives a 403 error.
+- **Registration** (`/register`): open to everyone, with no token. Signing up for an
+  open contest is something any visitor does.
+- Every page that changes data only accepts requests from the same computer.
+- Pages that only read data need no token.
 
-READ operations:
+## 5. Assumptions we made
 
-1. Competitor search
-2. Championship history
-3. Rankings
-4. Category search
-5. Gold medals by affiliation
-6. Competitor performance
-7. Category popularity
+**Data**
 
-WRITE operations (administration page, all in explicit transactions):
+- The history comes from the WBMC website (results, venues, hosts, Best in Show
+  winners, hometowns, clubs), collected in
+  `WBMC_Historical_Database_Completed.xlsx` and `wbmc_scraped_data/`. If the
+  website does not give a value, it is left empty (NULL). We never invent values.
+- All IDs are our own numbers (`competitor_id`, `category_id`, contest and entry
+  numbers). The "Competitor Number" in the Excel sheet is only a bib number for one
+  edition, so we do not use it.
+- Championships are held in 1990 or in odd years from 1995 on, and the database
+  enforces this. 2021 was cancelled because of COVID-19 and replaced by 2023. The
+  Results page shows the reason for a cancelled edition and links to its
+  replacement.
+- Every edition has its own category rows, so there are 262 in total. The
+  `rule_version` text (like `V2-import-2015`) is just a label we made: V2 means the
+  v2 spreadsheet and the year is the first edition where the category appears.
+  The website has no official rule version numbers.
+- The website does not give category aliases, so `CATEGORY_ALIAS` is empty. It also
+  does not say which categories allow styling aids, so `styling_aids` is empty for
+  all of them.
+- Only the published ranks are stored. Competitors who stayed tied share a rank. An
+  entry with no published rank has an empty rank. Scores do not decide the rank.
+  Some 2023 contests used a separate tie-break score (for example, in Imperial
+  Moustache, Ralf Schulz and Frank Wiegand both scored 45.5 and tie-break scores of
+  49 and 46 put them 2nd and 3rd). The schema has no column for it, so it is not
+  stored.
+- Competitors with one name have an empty last name. A competitor can have only one
+  entry per edition.
+- Hometowns exist only for the editions that published them (1999 to 2009, 2019
+  and 2025): 826 entries in total.
+- Club membership status is not published, so it is empty for all 12 clubs. A club
+  marked Inactive cannot be given new members.
+- The website has no judge data, so `JUDGE`, `ASSIGNED_TO` and `SCORES` start empty.
+  Judges are added to contests from the admin page. `REPRESENTS` also starts empty.
+  A row is added only when someone registers with a club.
 
-8. Register an entry (INSERT), with an optional club affiliation. Leaving the
-   club box empty creates no `REPRESENTS` row.
-9. Update an entry's score (UPDATE). Refused once the contest is Published
-   (Phase 3: no score edits after `result_status = Published`). `final_rank` is
-   not changed, because Phase 3 states the score does not determine the rank.
-10. Delete an unpublished entry (DELETE). Refused for scored or ranked entries
-    and for Published contests.
+**Open contests we added**
 
-Also on the administration page: change a club's membership status.
+- The four 2027 contests (results `Pending`, registration `Open`) and the
+  scheduled 2029 edition are not website data. We added them so the forms have
+  contests to work on. The 2027 contests reuse four existing 2025 categories.
 
-TODO: reorder this list to match the demo video.
+**Rules for changes**
 
-## 6. Data notes
+- Registering, changing a score, deleting an entry and adding a judge work only on a
+  contest whose results are still `Pending`. Registering also needs registration to
+  be `Open`. Published results cannot be changed.
+- An edition with any published contest cannot be rescheduled or cancelled.
+- Changing a score never changes the rank.
+- An entry that already has a score or a rank cannot be deleted.
+- Each change runs as one transaction. If anything goes wrong, nothing is saved.
 
-- All historical data (1999 to 2025 results, venues, hosts, Best in Show winners,
-  hometowns, clubs) comes from the WBMC website and the sources used to build the
-  archive. Fields the website does not publish are NULL.
-- Hometowns exist only for the editions that published a location (1999 to 2009,
-  2019 and 2025).
-- The four 2027 contests (`result_status = Pending`, `registration_status = Open`)
-  are not website data. They reuse four existing 2025 categories so the write
-  operations have open contests to work on; published history cannot be changed
-  through the application.
-- Some tables are empty because the website publishes nothing for them.
+**Test data**
+
+- Anything added through the website (registrations, new editions, judges) exists
+  only in the running database. To go back to the original data, run `schema.sql` and
+  `populate.sql` again (step 3.3).

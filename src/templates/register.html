@@ -7,18 +7,26 @@
 <h2 class="h4">Registration details</h2>
 {% if result.after.competitor %}
 <p>🎉 New competitor created: ID {{ result.after.competitor.competitor_id }}</p>
+<p>Name: {{ result.after.competitor.first_name }}{% if result.after.competitor.last_name %} {{ result.after.competitor.last_name }}{% endif %}</p>
 {% endif %}
 {% if result.after.competitor_id %}
 <p>Competitor ID: {{ result.after.competitor_id }}</p>
 {% endif %}
-{% if result.after.entry_no %}
-<p>Entry number: {{ result.after.entry_no }}</p>
+{% set entry_no = result.after.entry_no or (result.after.entry.entry_no if result.after.entry else none) %}
+{% if entry_no %}
+<p>Entry number: {{ entry_no }}</p>
 {% endif %}
 {% if result.after.contest_name %}
 <p>Contest: {{ result.after.contest_name }}</p>
 {% endif %}
+{% if result.after.club_name %}
+<p>Club: {{ result.after.club_name }} (ID {{ result.after.club_affiliation }})</p>
 {% endif %}
-<div class="row g-4 mt-2">{% for kind,title,fields in [('existing','Register an existing competitor',['year','contest_no','competitor_id','club_id']),('new','Register a new competitor',['year','contest_no','name','club_id','nickname','hometown_city','hometown_region','hometown_country'])] %}
+{% endif %}
+{% set optional=['last_name','club_id','nickname','hometown_city','hometown_region','hometown_country'] %}
+{% set texts={'first_name':80,'last_name':80,'nickname':100,'hometown_city':100,'hometown_region':100,'hometown_country':80} %}
+{% set labels={'first_name':'First name','last_name':'Last name'} %}
+<div class="row g-4 mt-2">{% for kind,title,fields in [('existing','Register an existing competitor',['year','contest_no','competitor_id','club_id']),('new','Register a new competitor',['year','contest_no','first_name','last_name','club_id','nickname','hometown_city','hometown_region','hometown_country'])] %}
 <section class="col-md-6"><h2 class="h4">{{ title }}</h2><form method="post" action="/register/{{ kind }}" class="filter-panel">
-{% for field in fields %}<label class="form-label mt-2" for="{{ kind }}-{{ field }}">{% if field=='name' %}Competitor name{% else %}{{ field|replace('_',' ')|title }}{% endif %}{% if field in ['club_id','nickname','hometown_city','hometown_region','hometown_country'] %} (optional){% endif %}</label><input class="form-control" {% if field in ['name','nickname','hometown_city','hometown_region','hometown_country'] %}type="text" maxlength="{{ {'name':80,'nickname':100,'hometown_city':100,'hometown_region':100,'hometown_country':80}[field] }}"{% else %}type="number" min="1"{% endif %} id="{{ kind }}-{{ field }}" name="{{ field }}"{% if field not in ['club_id','nickname','hometown_city','hometown_region','hometown_country'] %} required{% endif %}>{% endfor %}
+{% for field in fields %}<label class="form-label mt-2" for="{{ kind }}-{{ field }}">{{ labels.get(field, field|replace('_',' ')|title) }}{% if field in optional %} (optional){% endif %}</label><input class="form-control" {% if field in texts %}type="text" maxlength="{{ texts[field] }}"{% else %}type="number" min="1"{% endif %} id="{{ kind }}-{{ field }}" name="{{ field }}"{% if field not in optional %} required{% endif %}>{% endfor %}
 <button class="btn btn-primary mt-3">{{ title }}</button></form></section>{% endfor %}</div>{% endblock %}
