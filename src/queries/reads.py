@@ -1,4 +1,4 @@
-"""Seven read-only features. Caller supplies a PyMySQL DictCursor connection.
+"""Eight read-only features. Caller supplies a PyMySQL DictCursor connection.
 
 All values are bound parameters. Only fixed, allowlisted SQL fragments are composed.
 No function commits, changes session state, or performs DML/DDL.
@@ -105,6 +105,15 @@ def rankings(conn, year, category_id, *, max_rank=None):
         JOIN CATEGORY k ON k.category_id = t.category_id
         WHERE {' AND '.join(where)}
         ORDER BY e.final_rank IS NULL, e.final_rank, e.entry_no''', params)
+
+
+def contest_judges(conn, year, category_id):
+    """Judges assigned to the contest of one category in one edition."""
+    return _fetch(conn, '''SELECT j.judge_id, j.full_name, j.role, j.organisation
+        FROM ASSIGNED_TO a JOIN JUDGE j ON j.judge_id = a.judge_id
+        JOIN CONTEST t ON t.championship_year = a.championship_year AND t.contest_no = a.contest_no
+        WHERE t.championship_year = %s AND t.category_id = %s
+        ORDER BY j.full_name''', [_integer(year, 'year', 1, 32767), _integer(category_id, 'category_id')])
 
 
 def category_search(conn, text='', *, bracket=None, year=None):

@@ -81,8 +81,9 @@ def results(request: Request, year: str=Query('',max_length=5), category_id: str
     selected = next((c for c in categories if c['category_id']==selected_id),categories[0] if categories else None)
     rows = reads.rankings(db,selected_year,selected['category_id']) if selected else []
     tied = {rank for rank,count in Counter(r['final_rank'] for r in rows).items() if rank is not None and count>1}
+    judges = reads.contest_judges(db,selected_year,selected['category_id']) if selected else []
     return render(request,'results',editions=editions,year=selected_year,categories=categories,
-        selected=selected,rows=rows,tied=tied)
+        selected=selected,rows=rows,tied=tied,judges=judges)
 
 
 @router.get('/reports')

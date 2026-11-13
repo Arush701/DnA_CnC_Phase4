@@ -32,7 +32,7 @@ def execute(conn, operation, **values):
                 c.execute('UPDATE CLUB SET membership_status=%s WHERE club_id=%s',(status,club))
                 c.execute('SELECT * FROM CLUB WHERE club_id=%s',(club,))
                 after=c.fetchone()
-            elif operation in ('register','delete','score','newcompetitor'):
+            elif operation in ('register','delete','score','newcompetitor','judge'):
                 year=positive(values['year']); contest=positive(values['contest_no'])
                 c.execute('SELECT * FROM CONTEST WHERE championship_year=%s AND contest_no=%s FOR UPDATE',(year,contest))
                 target=c.fetchone()
@@ -95,6 +95,30 @@ def execute(conn, operation, **values):
                     person=c.fetchone()
                     c.execute('SELECT * FROM ENTRY WHERE championship_year=%s AND contest_no=%s AND entry_no=%s',(year,contest,number))
                     after={'competitor':person,'entry':c.fetchone(),'club_affiliation':club,'nickname':nickname}
+                elif operation=='judge':
+                    # INSERT: assign a judge to a contest that is not yet published, creating the judge if needed.
+                    judge_id=values.get('judge_id')
+                    if judge_id is not None:
+                        judge_id=positive(judge_id)
+                        c.execute('SELECT * FROM JUDGE WHERE judge_id=%s FOR UPDATE',(judge_id,))
+                        if not c.fetchone(): raise ValueError('Judge does not exist.')
+                    else:
+                        name,role,organisation,email=((values.get(k) or '').strip() or None
+                                                      for k in ('name','role','organisation','email'))
+                        if not name: raise ValueError('Enter the judge name or an existing judge ID.')
+                        if len(name)>150 or (role and len(role)>80) or (organisation and len(organisation)>150) or (email and len(email)>255):
+                            raise ValueError('A judge field is too long.')
+                        if email:
+                            c.execute('SELECT judge_id FROM JUDGE WHERE email=%s',(email,))
+                            if c.fetchone(): raise ValueError('A judge with this email already exists.')
+                        c.execute('INSERT INTO JUDGE (email, full_name, role, organisation) VALUES (%s,%s,%s,%s)',(email,name,role,organisation))
+                        judge_id=c.lastrowid
+                    c.execute('SELECT 1 FROM ASSIGNED_TO WHERE judge_id=%s AND championship_year=%s AND contest_no=%s',(judge_id,year,contest))
+                    if c.fetchone(): raise ValueError('This judge is already assigned to this contest.')
+                    c.execute('INSERT INTO ASSIGNED_TO (judge_id,championship_year,contest_no) VALUES (%s,%s,%s)',(judge_id,year,contest))
+                    before=None
+                    c.execute('SELECT * FROM JUDGE WHERE judge_id=%s',(judge_id,))
+                    after={'judge':c.fetchone(),'assigned_to':{'championship_year':year,'contest_no':contest}}
                 elif operation=='score':
                     # UPDATE: record or correct one entry's score while its contest is still Pending.
                     # Phase 3: "no score edits after result_status = Published" (checked above); score >= 0.
