@@ -2,7 +2,7 @@
 {% block content %}<p class="eyebrow">ADMINISTRATION</p><h1>Administrative operations</h1>
 <p>Organiser actions on the live WBMC database. Only contests that are still open (results not published) can be changed, and editions with published results are protected, so published history is not altered. A local access token is required. New competitors register on the <a href="/register">Register</a> page.</p>
 {% if error %}<p class="alert alert-danger" role="alert">{{ error }}</p>{% endif %}
-{% if result %}<div class="alert alert-success">Transaction committed.</div><h2 class="h4">Before</h2><pre>{{ result.before }}</pre><h2 class="h4">After</h2><pre>{{ result.after }}</pre>{% endif %}
+{% if result %}<div class="alert alert-success" role="status">Transaction committed.</div>{% endif %}
 {% set labels={'name':'Judge name (required unless an ID is given)','judge_id':'Existing judge ID (optional; if given, the details below are ignored)','role':'Role (optional)','organisation':'Organisation (optional)','email':'Email (optional)',
  'edition.year':'Edition year (1990 or an odd year from 1995)','edition.start_date':'Start date (optional)','edition.end_date':'End date (optional)','edition.cancellation_reason':'Cancellation reason (required if Cancelled)','edition.website_url':'Website URL (optional)','edition.host_club_id':'Host club ID (optional)','edition.venue_id':'Venue ID (optional)',
  'reschedule.status':'New status (leave on Keep current to change only the dates)','reschedule.start_date':'New start date (blank keeps it)','reschedule.end_date':'New end date (blank keeps it)','reschedule.cancellation_reason':'Cancellation reason (required when cancelling)','reschedule.replacement_year':'Replacement edition year (optional, cancelled editions only)'} %}
