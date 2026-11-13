@@ -51,7 +51,7 @@ def parse(operation, fields):
 
 
 async def handle(request, operation, page, need_token):
-    if os.environ.get('WBMC_ADMIN_ENABLED')!='1': raise HTTPException(403)
+    if need_token and os.environ.get('WBMC_ADMIN_ENABLED')!='1': raise HTTPException(403)
     if request.client.host not in ('127.0.0.1','::1','testclient'): raise HTTPException(403)
     fields=parse_qs((await request.body()).decode('utf-8'),keep_blank_values=True)
     if need_token:
@@ -80,6 +80,6 @@ async def register(request: Request, kind: str):
 @router.post('/admin/{operation}')
 async def write(request: Request, operation: str):
     if operation not in ADMIN_OPERATIONS:
-        if os.environ.get('WBMC_ADMIN_ENABLED')!='1': raise HTTPException(403)
+        if need_token and os.environ.get('WBMC_ADMIN_ENABLED')!='1': raise HTTPException(403)
         response=render(request,'admin',error='Unknown operation.'); response.status_code=400; return response
     return await handle(request,operation,'admin',need_token=True)
