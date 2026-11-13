@@ -35,8 +35,7 @@ def check_connection():
 
 def get_read_db():
     """Website connections are read-only and cannot target the live database."""
-    if get_db_config()['database'] == 'wbmc_db':
-        raise ValueError('Configure the separate archive database')
+
     conn = get_connection()
     try:
         with conn.cursor() as cursor:

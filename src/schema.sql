@@ -175,7 +175,7 @@ CREATE TABLE COMPETITOR (
     email         VARCHAR(255) NULL,
     first_name    VARCHAR(80)  NOT NULL,
     middle_name   VARCHAR(80)  NULL,
-    last_name     VARCHAR(80)  NOT NULL,
+    last_name     VARCHAR(80)  NULL,
     birth_date    DATE         NULL,
     CONSTRAINT uq_competitor_email UNIQUE (email),     -- nullable: many NULLs allowed
     INDEX idx_competitor_name (last_name, first_name)
